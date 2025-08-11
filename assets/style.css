@@ -1,0 +1,143 @@
+/* General Styling */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #121212;
+    color: #e0e0e0;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 20px;
+}
+
+header h1 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 2.5em;
+}
+
+header p {
+    color: #888;
+    margin-top: 5px;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.card {
+    background-color: #1e1e1e;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.card h2 {
+    margin-top: 0;
+    font-size: 1.2em;
+    color: #aaa;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.card p {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 0;
+    color: #ffffff;
+    text-align: right;
+}
+
+.error-card {
+    background-color: #4a1d1d;
+    border-color: #832b2b;
+}
+
+.status-code {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.4em;
+    font-weight: normal;
+    margin: 2px;
+}
+.status-2xx { background-color: #28a745; color: white; }
+.status-3xx { background-color: #17a2b8; color: white; }
+.status-4xx { background-color: #ffc107; color: black; }
+.status-5xx { background-color: #dc3545; color: white; }
+
+
+/* Main Content Tables */
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.table-card {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.table-card h2 {
+    margin-top: 0;
+    font-size: 1.5em;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+}
+
+th {
+    font-weight: bold;
+    color: #aaa;
+}
+
+tbody tr:hover {
+    background-color: #2a2a2a;
+}
+
+.url-cell {
+    word-break: break-all;
+}
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    color: #555;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+}
