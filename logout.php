@@ -1,8 +1,16 @@
 <?php
+// logout.php
+
+// Panggil konfigurasi untuk memulai sesi
 require_once 'config.php';
-session_start();
-$_SESSION = [];
+
+// Hapus semua variabel sesi
+$_SESSION = array();
+
+// Hancurkan sesi
 session_destroy();
-header('Location: login.php');
+
+// Arahkan kembali ke halaman login
+header("location: login.php");
 exit;
 ?>
