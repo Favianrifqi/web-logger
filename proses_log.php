@@ -13,7 +13,7 @@ $dbHost = 'localhost';
 $dbName = 'wisataju_proyek_logger';
 $dbUser = 'wisataju_loggeruser';
 $dbPass = '#qUho$a]iRh}R%gn';
-$logFilePath = '/home/wisataju/access-logs/wisatajubung.com.log';
+$logFilePath = '/home/wisataju/access-logs/wisatajubung.com-ssl_log';
 // -----------------------------------------
 
 // --- Pemeriksaan Awal File Log ---
