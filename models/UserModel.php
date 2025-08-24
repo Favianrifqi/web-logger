@@ -20,9 +20,16 @@ class UserModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function updatePassword($id, $newHashedPassword) {
-        $stmt = $this->pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
-        return $stmt->execute([$newHashedPassword, $id]);
+    public function updateCredentials($id, $newUsername, $newHashedPassword = null) {
+        if ($newHashedPassword) {
+            // Jika password juga diubah
+            $stmt = $this->pdo->prepare("UPDATE users SET username = ?, password = ? WHERE id = ?");
+            return $stmt->execute([$newUsername, $newHashedPassword, $id]);
+        } else {
+            // Jika hanya username yang diubah
+            $stmt = $this->pdo->prepare("UPDATE users SET username = ? WHERE id = ?");
+            return $stmt->execute([$newUsername, $id]);
+        }
     }
 }
 ?>

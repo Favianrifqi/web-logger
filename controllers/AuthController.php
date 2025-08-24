@@ -54,7 +54,7 @@ class AuthController {
         exit;
     }
     
-   public function showAdminForm() {
+    public function showAdminForm() {
         if (!isset($_SESSION['user_id'])) {
             header('Location: index.php?action=login');
             exit;
@@ -62,25 +62,20 @@ class AuthController {
         require_once __DIR__ . '/../views/admin.php';
     }
 
-    // FUNGSI BARU 2: Untuk memproses perubahan password
     public function handleAdminUpdate() {
         if (!isset($_SESSION['user_id'])) {
             header('Location: index.php?action=login');
             exit;
         }
 
-        $old_password = $_POST['old_password'];
+        $current_password = $_POST['current_password'];
+        $new_username = trim($_POST['username']);
         $new_password = $_POST['new_password'];
         $confirm_password = $_POST['confirm_password'];
-
-        if (empty($old_password) || empty($new_password) || empty($confirm_password)) {
-            $_SESSION['error_message'] = 'Semua field password wajib diisi.';
-            header('Location: index.php?action=admin');
-            exit;
-        }
-
-        if ($new_password !== $confirm_password) {
-            $_SESSION['error_message'] = 'Password baru dan konfirmasi tidak cocok.';
+        
+        // Validasi input dasar
+        if (empty($current_password) || empty($new_username)) {
+            $_SESSION['error_message'] = 'Username baru dan password saat ini wajib diisi.';
             header('Location: index.php?action=admin');
             exit;
         }
@@ -88,16 +83,38 @@ class AuthController {
         $userModel = new UserModel(getDbConnection());
         $user = $userModel->findById($_SESSION['user_id']);
 
-        if (!$user || !password_verify($old_password, $user['password'])) {
-            $_SESSION['error_message'] = 'Password lama salah.';
+        // Verifikasi password saat ini
+        if (!$user || !password_verify($current_password, $user['password'])) {
+            $_SESSION['error_message'] = 'Password Anda saat ini salah.';
+            header('Location: index.php?action=admin');
+            exit;
+        }
+        
+        // Cek apakah username baru sudah dipakai oleh user lain
+        $existingUser = $userModel->findByUsername($new_username);
+        if ($existingUser && $existingUser['id'] !== $_SESSION['user_id']) {
+            $_SESSION['error_message'] = 'Username tersebut sudah digunakan. Silakan pilih yang lain.';
             header('Location: index.php?action=admin');
             exit;
         }
 
-        $newHashedPassword = password_hash($new_password, PASSWORD_DEFAULT);
-        $userModel->updatePassword($_SESSION['user_id'], $newHashedPassword);
+        $newHashedPassword = null;
+        // Proses perubahan password HANYA JIKA kolom password baru diisi
+        if (!empty($new_password)) {
+            if ($new_password !== $confirm_password) {
+                $_SESSION['error_message'] = 'Password baru dan konfirmasi tidak cocok.';
+                header('Location: index.php?action=admin');
+                exit;
+            }
+            $newHashedPassword = password_hash($new_password, PASSWORD_DEFAULT);
+        }
+        
+        // Update ke database
+        $userModel->updateCredentials($_SESSION['user_id'], $new_username, $newHashedPassword);
 
-        $_SESSION['success_message'] = 'Password berhasil diperbarui!';
+        // Update session dengan username baru
+        $_SESSION['username'] = $new_username;
+        $_SESSION['success_message'] = 'Kredensial berhasil diperbarui!';
         header('Location: index.php?action=admin');
         exit;
     }

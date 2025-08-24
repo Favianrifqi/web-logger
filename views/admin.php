@@ -18,7 +18,7 @@
         </header>
 
         <div class="login-card" style="margin: 0 auto;">
-            <h2>Ubah Password</h2>
+            <h2>Ubah Kredensial</h2>
 
             <?php if (isset($_SESSION['success_message'])): ?>
                 <div class="login-error" style="background-color: #2e7d32; border-color: #4caf50; color: #e8f5e9;"><?= htmlspecialchars($_SESSION['success_message']); unset($_SESSION['success_message']); ?></div>
@@ -30,18 +30,24 @@
 
             <form action="index.php?action=updateAdmin" method="post">
                 <div class="form-group">
-                    <label for="old_password">Password Lama</label>
-                    <input type="password" name="old_password" id="old_password" required>
+                    <label for="username">Username Baru</label>
+                    <input type="text" name="username" id="username" value="<?= htmlspecialchars($_SESSION['username'] ?? '') ?>" required>
                 </div>
+                <hr style="border-color: var(--border-color); margin: 20px 0;">
                 <div class="form-group">
-                    <label for="new_password">Password Baru</label>
-                    <input type="password" name="new_password" id="new_password" required>
+                    <label for="new_password">Password Baru (Kosongkan jika tidak ingin diubah)</label>
+                    <input type="password" name="new_password" id="new_password">
                 </div>
                  <div class="form-group">
                     <label for="confirm_password">Konfirmasi Password Baru</label>
-                    <input type="password" name="confirm_password" id="confirm_password" required>
+                    <input type="password" name="confirm_password" id="confirm_password">
                 </div>
-                <button type="submit" class="btn-submit">Update Password</button>
+                <hr style="border-color: var(--border-color); margin: 20px 0;">
+                <div class="form-group">
+                    <label for="current_password">Masukkan Password Anda Saat Ini untuk Konfirmasi</label>
+                    <input type="password" name="current_password" id="current_password" required>
+                </div>
+                <button type="submit" class="btn-submit">Update Kredensial</button>
             </form>
         </div>
     </div>
