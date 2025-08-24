@@ -1,4 +1,4 @@
-/* assets/style.css */
+/* public/assets/style.css */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 :root {
@@ -201,7 +201,7 @@ footer {
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
     box-sizing: border-box;
 }
 
@@ -238,6 +238,11 @@ footer {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(54, 162, 235, 0.4);
+}
+
+.g-recaptcha {
+    display: flex;
+    justify-content: center;
 }
 
 .btn-submit {

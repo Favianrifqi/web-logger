@@ -1,6 +1,0 @@
-/data/
-access.log
-*.log
-
-/vendor/
-.env
