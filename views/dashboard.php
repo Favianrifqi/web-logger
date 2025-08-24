@@ -11,6 +11,7 @@
     <div class="container">
         <header>
             <h1>Dasbor Analisis Log Website</h1>
+            <a href="index.php?action=admin" class="logout-button" style="background-color: var(--orange-color); right: 120px;">Admin Panel</a>
             <a href="index.php?action=logout" class="logout-button">Logout</a>
             <p>Data terakhir diperbarui pada: <?= htmlspecialchars($summary['date']) ?></p>
         </header>

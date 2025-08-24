@@ -272,3 +272,13 @@ footer {
     border: 1px solid var(--red-color);
     font-size: 14px;
 }
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--card-bg-color) inset !important;
+    -webkit-text-fill-color: var(--text-color) !important;
+    caret-color: var(--text-color) !important;
+    border: 1px solid var(--border-color);
+}

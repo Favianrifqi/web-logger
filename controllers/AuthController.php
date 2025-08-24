@@ -54,6 +54,52 @@ class AuthController {
         exit;
     }
     
-    // Anda bisa menambahkan fungsi showAdminForm() dan handleAdminUpdate() di sini nanti
+   public function showAdminForm() {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit;
+        }
+        require_once __DIR__ . '/../views/admin.php';
+    }
+
+    // FUNGSI BARU 2: Untuk memproses perubahan password
+    public function handleAdminUpdate() {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit;
+        }
+
+        $old_password = $_POST['old_password'];
+        $new_password = $_POST['new_password'];
+        $confirm_password = $_POST['confirm_password'];
+
+        if (empty($old_password) || empty($new_password) || empty($confirm_password)) {
+            $_SESSION['error_message'] = 'Semua field password wajib diisi.';
+            header('Location: index.php?action=admin');
+            exit;
+        }
+
+        if ($new_password !== $confirm_password) {
+            $_SESSION['error_message'] = 'Password baru dan konfirmasi tidak cocok.';
+            header('Location: index.php?action=admin');
+            exit;
+        }
+
+        $userModel = new UserModel(getDbConnection());
+        $user = $userModel->findById($_SESSION['user_id']);
+
+        if (!$user || !password_verify($old_password, $user['password'])) {
+            $_SESSION['error_message'] = 'Password lama salah.';
+            header('Location: index.php?action=admin');
+            exit;
+        }
+
+        $newHashedPassword = password_hash($new_password, PASSWORD_DEFAULT);
+        $userModel->updatePassword($_SESSION['user_id'], $newHashedPassword);
+
+        $_SESSION['success_message'] = 'Password berhasil diperbarui!';
+        header('Location: index.php?action=admin');
+        exit;
+    }
 }
 ?>
