@@ -27,5 +27,34 @@
             <button type="submit" class="btn-submit">Login</button>
         </form>
     </div>
+    </div>
+
+    <script>
+        // Script untuk mendeteksi autofill dan menerapkan style
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.form-group input');
+            
+            // Beri sedikit waktu bagi browser untuk melakukan autofill
+            setTimeout(() => {
+                inputs.forEach(input => {
+                    // Cek apakah browser sudah mengisi value dan menerapkan pseudo-class-nya
+                    if (input.matches(':-webkit-autofill')) {
+                        input.classList.add('autofilled');
+                    }
+                });
+            }, 100);
+
+            // Juga tambahkan listener jika user mengetik manual
+             inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.value.length > 0) {
+                        this.classList.add('autofilled');
+                    } else {
+                        this.classList.remove('autofilled');
+                    }
+                });
+             });
+        });
+    </script>
 </body>
 </html>

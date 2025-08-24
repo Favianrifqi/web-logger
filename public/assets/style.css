@@ -187,7 +187,10 @@ footer {
     color: var(--text-muted-color);
 }
 
-/* STYLES FOR LOGIN PAGE */
+/* ======================================= */
+/* ===== STYLES FOR LOGIN & ADMIN PAGE ===== */
+/* ======================================= */
+
 .login-body {
     display: flex;
     justify-content: center;
@@ -205,7 +208,7 @@ footer {
     box-sizing: border-box;
 }
 
-.login-card h1 {
+.login-card h1, .login-card h2 {
     margin-top: 0;
     margin-bottom: 24px;
     text-align: center;
@@ -273,14 +276,22 @@ footer {
     font-size: 14px;
 }
 
-/* Fix Final untuk background putih di input form saat autofill */
+/* --- FIX UNTUK BROWSER AUTOFILL --- */
+/* Ini adalah blok yang kita perbarui untuk mengatasi input berwarna putih */
+
+/* Hapus style bawaan browser */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
     border: 1px solid var(--border-color);
+    transition: background-color 5000s ease-in-out 0s; /* Trik agar background tidak berubah */
     -webkit-text-fill-color: var(--text-color) !important;
-    -webkit-box-shadow: 0 0 0 30px var(--card-bg-color) inset !important;
-    transition: background-color 5000s ease-in-out 0s; /* Trik transisi */
     caret-color: var(--text-color) !important;
+}
+
+/* Kode yang Disarankan (Lebih Lengkap) */
+.form-group input.autofilled {
+    -webkit-box-shadow: 0 0 0 30px var(--card-bg-color) inset !important; /* Untuk Chrome/Safari */
+    box-shadow: 0 0 0 30px var(--card-bg-color) inset !important; /* Standar untuk browser lain */
 }
