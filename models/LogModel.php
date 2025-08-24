@@ -13,18 +13,24 @@ class LogModel {
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: ['unique_visitors' => 0, 'total_hits' => 0, 'date' => date('Y-m-d')];
     }
     
-    public function getLogs($table, $limit) {
-        $stmt = $this->pdo->prepare("SELECT * FROM {$table} ORDER BY timestamp DESC LIMIT :limit");
+    public function getLogs($table, $limit, $offset) {
+        $stmt = $this->pdo->prepare("SELECT * FROM {$table} ORDER BY timestamp DESC LIMIT :limit OFFSET :offset");
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
-    public function getTopItems($table, $column, $limit) {
-        $stmt = $this->pdo->prepare("SELECT {$column}, hits FROM {$table} ORDER BY hits DESC LIMIT :limit");
+    public function getTopItems($table, $column, $limit, $offset) {
+        $stmt = $this->pdo->prepare("SELECT {$column}, hits FROM {$table} ORDER BY hits DESC LIMIT :limit OFFSET :offset");
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getTotalRows($tableName) {
+        return $this->pdo->query("SELECT COUNT(*) FROM {$tableName}")->fetchColumn();
     }
 
     public function getAllStatusCodes() {
@@ -32,9 +38,9 @@ class LogModel {
     }
 
     public function getTopPagesForChart($limit) {
-        $pages = $this->getTopItems('pages', 'url', $limit);
+        $pages = $this->getTopItems('pages', 'url', $limit, 0);
         $labels = array_map(function($p) {
-            $label = preg_replace('#^/.*?/#', '', $p['url']);
+            $label = preg_replace('#^/(halaman/|berita/)?#', '', $p['url']);
             $label = $label === '/' ? 'Halaman Utama' : $label;
             return strlen($label) > 25 ? substr($label, 0, 25).'...' : $label;
         }, $pages);
