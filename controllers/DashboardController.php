@@ -26,6 +26,7 @@ class DashboardController {
             'browserChartData' => $logModel->getTopStats('browsers', 7),
             'osChartData' => $logModel->getTopStats('operating_systems', 7)
         ];
+        extract($data);
         
         require_once __DIR__ . '/../views/dashboard.php';
     }
