@@ -17,7 +17,7 @@
             </div>
         </header>
 
-        <div class="login-card" style="margin: 0 auto;">
+        <div class="login-card admin-card" style="margin: 0 auto;">
             <h2>Ubah Kredensial</h2>
 
             <?php if (isset($_SESSION['success_message'])): ?>
