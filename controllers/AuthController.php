@@ -36,8 +36,14 @@ class AuthController {
         $user = $userModel->findByUsername($_POST['username']);
 
         if ($user && password_verify($_POST['password'], $user['password'])) {
+            // 1. Regenerate session ID untuk mencegah session fixation
+            session_regenerate_id(true);
+            // 2. Simpan semua data sesi yang dibutuhkan
+            $_SESSION['loggedin'] = true;
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
+            $_SESSION['last_activity'] = time(); 
+
             header('Location: index.php?action=dashboard');
             exit;
         } else {

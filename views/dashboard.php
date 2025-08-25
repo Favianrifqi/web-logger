@@ -26,7 +26,11 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
     <div class="container">
         <header>
             <h1>Dasbor Analisis Log Website</h1>
-            <a href="index.php?action=admin" class="logout-button" style="background-color: var(--orange-color); right: 120px;">Admin Panel</a>
+            <a 
+            href="index.php?action=admin" 
+            class="logout-button" 
+            style="background-color: var(--orange-color); right: 120px;">Admin Panel</a>
+
             <a href="index.php?action=logout" class="logout-button">Logout</a>
             <p>Data terakhir diperbarui pada: <?= htmlspecialchars($summary['date']) ?></p>
         </header>
@@ -83,10 +87,10 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
                         <tbody><?php foreach ($topReferrers as $ref): ?><tr><td class="url-cell" title="<?= htmlspecialchars($ref['domain']) ?>"><?= htmlspecialchars($ref['domain']) ?></td><td><?= number_format($ref['hits']) ?></td></tr><?php endforeach; ?></tbody>
                     </table>
                     <?php renderPagination($paginationData['page_referrers']['totalPages'], $paginationData['page_referrers']['currentPage'], 'page_referrers'); ?>
-                </div>
-                <div class="table-card"><h2>Statistik Browser</h2><div class="chart-container" style="height: 250px;"><canvas id="browserChart"></canvas></div></div>
-                <div class="table-card"><h2>Statistik Sistem Operasi</h2><div class="chart-container" style="height: 250px;"><canvas id="osChart"></canvas></div></div>
-            </div>
+                <div class="chart-grid">
+    <div class="table-card"><h2>Statistik Browser</h2><div class="chart-container" style="height: 250px;"><canvas id="browserChart"></canvas></div></div>
+    <div class="table-card"><h2>Statistik Sistem Operasi</h2><div class="chart-container" style="height: 250px;"><canvas id="osChart"></canvas></div></div>
+</div>
 
         </div> <footer><p>Proyek Mini SIEM - KKN</p></footer>
     </div>

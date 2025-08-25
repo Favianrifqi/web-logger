@@ -22,7 +22,7 @@ body {
 }
 
 .container {
-    max-width: 1600px; /* Diperlebar untuk layout baru */
+    max-width: 1600px;
     margin: 20px auto;
     padding: 20px;
 }
@@ -92,10 +92,21 @@ header p {
     gap: 20px;
 }
 
+.chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
 /* Penyesuaian untuk layar lebih kecil (tablet ke bawah) */
 @media (max-width: 1200px) {
     .dashboard-grid {
         grid-template-columns: 1fr; /* Kembali ke 1 kolom */
+    }
+}
+@media (max-width: 768px) {
+    .chart-grid {
+        grid-template-columns: 1fr; /* Chart juga menjadi 1 kolom */
     }
 }
 
@@ -225,7 +236,7 @@ footer {
 
 /* Perbaikan untuk admin panel agar lebih lebar */
 .admin-card {
-    max-width: 700px;
+    max-width: 900px;
 }
 
 .login-card h1, .login-card h2 {
@@ -300,7 +311,6 @@ footer {
 /* === TRIK FINAL UNTUK BROWSER AUTOFILL === */
 /* ======================================= */
 
-/* 1. Definisikan animasinya untuk WebKit (Chrome, Safari) */
 @-webkit-keyframes autofill {
     to {
         color: var(--text-color);
@@ -308,7 +318,6 @@ footer {
     }
 }
 
-/* 2. Definisikan juga animasi standarnya (INI YANG DIMINTA VS CODE) */
 @keyframes autofill {
     to {
         color: var(--text-color);
@@ -316,13 +325,12 @@ footer {
     }
 }
 
-/* 3. Terapkan kedua versi animasi ke input yang di-autofill */
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus, 
 input:-webkit-autofill:active {
-    -webkit-animation-name: autofill; /* Untuk WebKit */
-    animation-name: autofill;         /* Standar */
+    -webkit-animation-name: autofill;
+    animation-name: autofill;
     -webkit-animation-fill-mode: both;
     animation-fill-mode: both;
     -webkit-text-fill-color: var(--text-color) !important;

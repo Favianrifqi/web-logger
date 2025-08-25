@@ -12,6 +12,9 @@
         <?php if (isset($_SESSION['error_message'])): ?>
             <div class="login-error"><?= htmlspecialchars($_SESSION['error_message']); unset($_SESSION['error_message']); ?></div>
         <?php endif; ?>
+        <?php if (isset($_GET['status']) && $_GET['status'] === 'session_expired'): ?>
+    <div class="login-error" style="background-color: #1e88e5; border-color: #42a5f5; color: #e3f2fd;">Sesi Anda telah berakhir karena tidak ada aktivitas. Silakan login kembali.</div>
+<?php endif; ?>
         <form action="index.php?action=login" method="post">
             <div class="form-group">
                 <label for="username">Username</label>
