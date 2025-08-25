@@ -6,7 +6,7 @@ define('DB_USER', 'wisataju_loggeruser');
 define('DB_PASS', '#qUho$a]iRh}R%gn');
 define('RECAPTCHA_SITE_KEY', '6LfCDK4rAAAAAIq6hutyvqA7_gogkzMJGcXeeyDb');
 define('RECAPTCHA_SECRET_KEY', '6LfCDK4rAAAAAA22z-dzH_pZj_SFXnruzOcKh-dB');
-define('SESSION_TIMEOUT', 1800); // Timeout dalam detik (1800 detik = 30 menit)
+define('SESSION_TIMEOUT', 10);
 
 // --- PENGATURAN SESI ---
 session_name('WebAppLoggerSession');
