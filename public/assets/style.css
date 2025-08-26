@@ -432,3 +432,20 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: var(--text-color) !important;
   caret-color: var(--text-color) !important;
 }
+
+.filter-form input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+/* Mengubah warna teks placeholder (dd/mm/yyyy) menjadi lebih terang */
+.filter-form input[type="date"]::-webkit-datetime-edit-text,
+.filter-form input[type="date"]::-webkit-datetime-edit-month-field,
+.filter-form input[type="date"]::-webkit-datetime-edit-day-field,
+.filter-form input[type="date"]::-webkit-datetime-edit-year-field {
+    color: var(--text-muted-color);
+}
+
+/* Mengubah warna teks setelah tanggal dipilih */
+.filter-form input[type="date"]:valid {
+    color: var(--text-color);
+}
