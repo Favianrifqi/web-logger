@@ -3,3 +3,10 @@
 
 # Abaikan folder vendor yang diinstall oleh Composer
 /vendor/
+
+# --- TAMBAHKAN DUA BARIS DI BAWAH INI ---
+# Abaikan file eksekusi Composer
+composer.phar
+
+# Abaikan semua file log
+*.log
