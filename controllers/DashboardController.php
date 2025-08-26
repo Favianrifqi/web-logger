@@ -19,6 +19,7 @@ class DashboardController {
         $searchTerm = isset($_GET['q']) ? trim(htmlspecialchars($_GET['q'])) : '';
         $startDate = isset($_GET['start_date']) && !empty($_GET['start_date']) ? $_GET['start_date'] : '';
         $endDate = isset($_GET['end_date']) && !empty($_GET['end_date']) ? $_GET['end_date'] : '';
+        $sortOrder = (!empty($startDate) || !empty($endDate)) ? 'ASC' : 'DESC';
 
         // Menyiapkan data paginasi
         $pageParams = [

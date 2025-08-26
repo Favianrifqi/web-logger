@@ -30,20 +30,25 @@ class LogModel {
         return count($whereClauses) > 0 ? " WHERE " . implode(' AND ', $whereClauses) : "";
     }
 
-    public function getLogs($table, $limit, $offset, $searchTerm = '', $startDate = '', $endDate = '') {
-        $params = [];
-        $whereClause = $this->buildWhereClause($params, $startDate, $endDate, $searchTerm, 'timestamp');
-        $sql = "SELECT * FROM {$table} {$whereClause} ORDER BY timestamp DESC LIMIT :limit OFFSET :offset";
-        
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-        foreach ($params as $key => $value) {
-            $stmt->bindValue($key, $value);
-        }
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function getLogs($table, $limit, $offset, $searchTerm = '', $startDate = '', $endDate = '', $sortOrder = 'DESC') {
+    $params = [];
+    $whereClause = $this->buildWhereClause($params, $startDate, $endDate, $searchTerm, 'timestamp');
+
+    // Memastikan sortOrder hanya 'ASC' atau 'DESC' untuk keamanan
+    $order = (strtoupper($sortOrder) === 'ASC') ? 'ASC' : 'DESC';
+
+    // Gunakan variabel $order di dalam query
+    $sql = "SELECT * FROM {$table} {$whereClause} ORDER BY timestamp {$order} LIMIT :limit OFFSET :offset";
+
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value);
     }
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
     public function getTotalRows($tableName, $searchTerm = '', $startDate = '', $endDate = '') {
         $params = [];
