@@ -245,3 +245,21 @@ Stack trace:
 #1 /home/wisataju/dashboard.wisatajubung.com/public/index.php(16): AuthController->showLoginForm()
 #2 {main}
   thrown in /home/wisataju/dashboard.wisatajubung.com/views/login.php on line 28
+[26-Aug-2025 17:18:40 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "RECAPTCHA_SITE_KEY" in /home/wisataju/dashboard.wisatajubung.com/views/login.php:28
+Stack trace:
+#0 /home/wisataju/dashboard.wisatajubung.com/controllers/AuthController.php(12): require_once()
+#1 /home/wisataju/dashboard.wisatajubung.com/public/index.php(16): AuthController->showLoginForm()
+#2 {main}
+  thrown in /home/wisataju/dashboard.wisatajubung.com/views/login.php on line 28
+[26-Aug-2025 17:21:06 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "RECAPTCHA_SITE_KEY" in /home/wisataju/dashboard.wisatajubung.com/views/login.php:28
+Stack trace:
+#0 /home/wisataju/dashboard.wisatajubung.com/controllers/AuthController.php(12): require_once()
+#1 /home/wisataju/dashboard.wisatajubung.com/public/index.php(16): AuthController->showLoginForm()
+#2 {main}
+  thrown in /home/wisataju/dashboard.wisatajubung.com/views/login.php on line 28
+[26-Aug-2025 17:21:08 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "RECAPTCHA_SITE_KEY" in /home/wisataju/dashboard.wisatajubung.com/views/login.php:28
+Stack trace:
+#0 /home/wisataju/dashboard.wisatajubung.com/controllers/AuthController.php(12): require_once()
+#1 /home/wisataju/dashboard.wisatajubung.com/public/index.php(16): AuthController->showLoginForm()
+#2 {main}
+  thrown in /home/wisataju/dashboard.wisatajubung.com/views/login.php on line 28
