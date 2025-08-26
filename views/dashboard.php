@@ -48,30 +48,21 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
             <div class="main-column">
                 <div class="table-card" id="aktivitas-terbaru">
                     <div class="table-header">
-    <h2>Aktivitas Terbaru</h2>
-    
-    <form action="index.php" method="GET" class="filter-form">
-        <input type="hidden" name="action" value="dashboard">
-        
-        <div class="form-group-inline">
-            <label for="start_date">Dari:</label>
-            <input type="date" name="start_date" id="start_date" value="<?= $_GET['start_date'] ?? '' ?>">
-        </div>
-        
-        <div class="form-group-inline">
-            <label for="end_date">Sampai:</label>
-            <input type="date" name="end_date" id="end_date" value="<?= $_GET['end_date'] ?? '' ?>">
-        </div>
-        
-        <input type="search" name="q" placeholder="Cari IP, URL, Status..." value="<?= $searchTerm ?? '' ?>">
-        
-        <button type="submit">Filter & Cari</button>
-        
-        <?php if (!empty($searchTerm) || !empty($_GET['start_date']) || !empty($_GET['end_date'])): ?>
-            <a href="index.php?action=dashboard" class="clear-search">Reset Filter</a>
-        <?php endif; ?>
-    </form>
-</div>
+                        <h2>Aktivitas Terbaru</h2>
+                        <a href="index.php?action=export&table=realtime_logs" class="export-button">Ekspor CSV</a>
+                    </div>
+                    <div class="filter-controls">
+                        <form action="index.php" method="GET" class="filter-form">
+                            <input type="hidden" name="action" value="dashboard">
+                            <div class="form-group-inline"><label for="start_date">Dari:</label><input type="date" name="start_date" id="start_date" value="<?= $_GET['start_date'] ?? '' ?>"></div>
+                            <div class="form-group-inline"><label for="end_date">Sampai:</label><input type="date" name="end_date" id="end_date" value="<?= $_GET['end_date'] ?? '' ?>"></div>
+                            <input type="search" name="q" placeholder="Cari IP, URL, Status..." value="<?= $searchTerm ?? '' ?>">
+                            <button type="submit">Filter & Cari</button>
+                            <?php if (!empty($searchTerm) || !empty($_GET['start_date']) || !empty($_GET['end_date'])): ?>
+                                <a href="index.php?action=dashboard" class="clear-search">Reset Filter</a>
+                            <?php endif; ?>
+                        </form>
+                    </div>
                     <table>
                         <thead><tr><th>Waktu</th><th>Alamat IP</th><th>Negara</th><th>URL</th><th>Status</th></tr></thead>
                         <tbody><?php foreach ($realtimeLogs as $log): ?><tr><td><?= htmlspecialchars($log['timestamp']) ?></td><td><a href="index.php?action=dashboard&q=<?= htmlspecialchars($log['ip']) ?>"><?= htmlspecialchars($log['ip']) ?></a></td><td><?= htmlspecialchars($log['country']) ?></td><td class="url-cell" title="<?= htmlspecialchars($log['url']) ?>"><?= htmlspecialchars(substr($log['url'], 0, 50)) ?>...</td><td><span class="status-code status-<?= substr($log['status'], 0, 1) ?>xx"><?= htmlspecialchars($log['status']) ?></span></td></tr><?php endforeach; ?></tbody>
@@ -80,7 +71,10 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
                 </div>
 
                 <div class="table-card" id="detail-error">
-                    <h2>Detail Error Log</h2>
+                    <div class="table-header">
+                        <h2>Detail Error Log</h2>
+                        <a href="index.php?action=export&table=error_logs" class="export-button">Ekspor CSV</a>
+                    </div>
                     <table>
                         <thead><tr><th>Waktu</th><th>Alamat IP</th><th>URL Error</th><th>Status</th></tr></thead>
                         <tbody><?php foreach ($errorLogs as $error): ?><tr><td><?= htmlspecialchars($error['timestamp']) ?></td><td><a href="index.php?action=dashboard&q=<?= htmlspecialchars($error['ip']) ?>"><?= htmlspecialchars($error['ip']) ?></a></td><td class="url-cell" title="<?= htmlspecialchars($error['url']) ?>"><?= htmlspecialchars(substr($error['url'], 0, 50)) ?>...</td><td><span class="status-code status-<?= substr($error['status'], 0, 1) ?>xx"><?= htmlspecialchars($error['status']) ?></span></td></tr><?php endforeach; ?></tbody>
@@ -91,7 +85,10 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
 
             <div class="sidebar-column">
                 <div class="table-card" id="halaman-populer">
-                    <h2>Halaman Terpopuler</h2>
+                    <div class="table-header">
+                        <h2>Halaman Terpopuler</h2>
+                        <a href="index.php?action=export&table=pages" class="export-button">Ekspor CSV</a>
+                    </div>
                     <div class="chart-container" style="height: 200px;"><canvas id="popularPagesChart"></canvas></div>
                     <table>
                         <thead><tr><th>URL</th><th>Hits</th></tr></thead>
@@ -100,7 +97,10 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
                     <?php renderPagination($paginationData['page_popular']['totalPages'], $paginationData['page_popular']['currentPage'], 'page_popular', 'halaman-populer'); ?>
                 </div>
                 <div class="table-card" id="alamat-ip-teratas">
-                    <h2>Alamat IP Teratas</h2>
+                    <div class="table-header">
+                        <h2>Alamat IP Teratas</h2>
+                        <a href="index.php?action=export&table=ips" class="export-button">Ekspor CSV</a>
+                    </div>
                     <table>
                         <thead><tr><th>Alamat IP</th><th>Hits</th></tr></thead>
                         <tbody><?php foreach ($topIps as $ip): ?><tr><td><a href="index.php?action=dashboard&q=<?= htmlspecialchars($ip['ip']) ?>"><?= htmlspecialchars($ip['ip']) ?></a></td><td><?= number_format($ip['hits']) ?></td></tr><?php endforeach; ?></tbody>
@@ -108,7 +108,10 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
                     <?php renderPagination($paginationData['page_ips']['totalPages'], $paginationData['page_ips']['currentPage'], 'page_ips', 'alamat-ip-teratas'); ?>
                 </div>
                 <div class="table-card" id="situs-perujuk">
-                    <h2>Situs Perujuk Teratas</h2>
+                    <div class="table-header">
+                        <h2>Situs Perujuk Teratas</h2>
+                        <a href="index.php?action=export&table=referrers" class="export-button">Ekspor CSV</a>
+                    </div>
                     <table>
                         <thead><tr><th>Domain Perujuk</th><th>Hits</th></tr></thead>
                         <tbody><?php foreach ($topReferrers as $ref): ?><tr><td class="url-cell" title="<?= htmlspecialchars($ref['domain']) ?>"><?= htmlspecialchars($ref['domain']) ?></td><td><?= number_format($ref['hits']) ?></td></tr><?php endforeach; ?></tbody>
@@ -127,21 +130,19 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
     
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // ... (Kode JavaScript lengkap Anda tidak perlu diubah)
             const createChart = (ctx, config) => { if(ctx) new Chart(ctx, config); };
             const popularPagesCtx = document.getElementById('popularPagesChart')?.getContext('2d');
             const browserCtx = document.getElementById('browserChart')?.getContext('2d');
             const osCtx = document.getElementById('osChart')?.getContext('2d');
             const historicalCtx = document.getElementById('historicalChart')?.getContext('2d');
-            
             const popularPagesChartData = <?= json_encode($chartData); ?>;
             const browserChartData = <?= json_encode($browserChartData); ?>;
             const osChartData = <?= json_encode($osChartData); ?>;
             const historicalDataRaw = <?= json_encode($historicalData); ?>;
-
             const historicalLabels = historicalDataRaw.map(d => d.date);
             const uniqueVisitorsData = historicalDataRaw.map(d => d.unique_visitors);
             const totalHitsData = historicalDataRaw.map(d => d.total_hits);
-
             createChart(historicalCtx, { type: 'line', data: { labels: historicalLabels, datasets: [{ label: 'Pengunjung Unik', data: uniqueVisitorsData, borderColor: 'rgba(54, 162, 235, 1)', backgroundColor: 'rgba(54, 162, 235, 0.2)', fill: true, tension: 0.4 }, { label: 'Total Hits', data: totalHitsData, borderColor: 'rgba(75, 192, 192, 1)', backgroundColor: 'rgba(75, 192, 192, 0.2)', fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true }, y: { beginAtZero: true } }, plugins: { legend: { position: 'top' } } } });
             createChart(popularPagesCtx, { type: 'bar', data: { labels: popularPagesChartData.labels, datasets: [{ label: 'Jumlah Hits', data: popularPagesChartData.data, backgroundColor: 'rgba(54, 162, 235, 0.6)' }] }, options: { indexAxis: 'y', scales: { x: { beginAtZero: true }, y: {} }, plugins: { legend: { display: false } }, maintainAspectRatio: false } });
             createChart(browserCtx, { type: 'pie', data: { labels: browserChartData.labels, datasets: [{ data: browserChartData.data, backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } } });
