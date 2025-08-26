@@ -72,13 +72,7 @@ header p {
 /* ===== LAYOUT BARU UNTUK DASHBOARD ===== */
 /* ======================================= */
 
-.summary-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
+/* Untuk layout grid baru di dashboard */
 .dashboard-grid {
   display: grid;
   grid-template-columns: 2fr 1fr; /* Kolom kiri lebih lebar */
@@ -179,7 +173,7 @@ tbody tr:hover {
 
 .pagination {
   margin-top: 15px;
-  text-align: center; /* Dibuat di tengah */
+  text-align: center; /* <-- Menjadi 'center' */
 }
 
 .pagination a,
@@ -319,88 +313,109 @@ footer {
   font-size: 14px;
 }
 
-/* ======================================= */
-/* ===== STYLE UNTUK FORM PENCARIAN ===== */
-/* ======================================= */
+/* ======================================================= */
+/* === STYLE UNTUK FILTER, JUDUL & TOMBOL EKSPOR (BARU) === */
+/* ======================================================= */
 
 .table-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap; /* Agar responsif di layar kecil */
-    gap: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px; /* Jarak antara judul dan area filter */
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .table-header h2 {
-    margin: 0;
+  margin: 0;
+}
+
+.filter-controls {
+  background-color: #333;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px; /* Jarak antara area filter dan tabel di bawahnya */
 }
 
 .filter-form {
-    display: flex;
-    align-items: center;
-    gap: 15px; /* Sedikit lebih renggang */
-    flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 
 .filter-form .form-group-inline {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .filter-form label {
-    font-weight: 500;
-    color: var(--text-muted-color);
+  font-weight: 500;
+  color: var(--text-muted-color);
 }
 
-.filter-form input[type="search"],
-.filter-form input[type="date"] {
-    padding: 8px 12px;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-    background-color: #333;
-    color: var(--text-color);
-    font-family: 'Poppins', sans-serif;
-    color-scheme: dark; /* Agar kalender date picker juga gelap */
+.filter-form input[type='search'],
+.filter-form input[type='date'] {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: #2c2c2c; /* Disesuaikan dengan warna kartu */
+  color: var(--text-color);
+  font-family: 'Poppins', sans-serif;
 }
 
-.filter-form input[type="search"] {
-    min-width: 250px;
+.filter-form input[type='search'] {
+  min-width: 250px;
 }
 
-.filter-form input[type="search"]:focus,
-.filter-form input[type="date"]:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(54, 162, 235, 0.4);
+.filter-form input[type='search']:focus,
+.filter-form input[type='date']:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(54, 162, 235, 0.4);
 }
 
 .filter-form button {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    background-color: var(--primary-color);
-    color: white;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .filter-form button:hover {
-    background-color: #2a8cd1;
+  background-color: #2a8cd1;
 }
 
 .filter-form .clear-search {
-    color: var(--text-muted-color);
-    text-decoration: none;
-    font-size: 14px;
-    margin-left: 5px;
+  color: var(--text-muted-color);
+  text-decoration: none;
+  font-size: 14px;
+  margin-left: 5px;
 }
 
 .filter-form .clear-search:hover {
-    color: var(--text-color);
-    text-decoration: underline;
+  color: var(--text-color);
+  text-decoration: underline;
+}
+
+.export-button {
+  background-color: var(--green-color);
+  color: white;
+  padding: 5px 12px;
+  font-size: 13px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.export-button:hover {
+  background-color: #3aa0a0;
 }
 
 /* ======================================= */
@@ -433,19 +448,19 @@ input:-webkit-autofill:active {
   caret-color: var(--text-color) !important;
 }
 
-.filter-form input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1);
+.filter-form input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }
 
 /* Mengubah warna teks placeholder (dd/mm/yyyy) menjadi lebih terang */
-.filter-form input[type="date"]::-webkit-datetime-edit-text,
-.filter-form input[type="date"]::-webkit-datetime-edit-month-field,
-.filter-form input[type="date"]::-webkit-datetime-edit-day-field,
-.filter-form input[type="date"]::-webkit-datetime-edit-year-field {
-    color: var(--text-muted-color);
+.filter-form input[type='date']::-webkit-datetime-edit-text,
+.filter-form input[type='date']::-webkit-datetime-edit-month-field,
+.filter-form input[type='date']::-webkit-datetime-edit-day-field,
+.filter-form input[type='date']::-webkit-datetime-edit-year-field {
+  color: var(--text-muted-color);
 }
 
 /* Mengubah warna teks setelah tanggal dipilih */
-.filter-form input[type="date"]:valid {
-    color: var(--text-color);
+.filter-form input[type='date']:valid {
+  color: var(--text-color);
 }
