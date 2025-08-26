@@ -69,5 +69,54 @@ class DashboardController {
         extract($data);
         require_once __DIR__ . '/../views/dashboard.php';
     }
+
+    public function handleExport() {
+        $this->checkAuth(); // Pastikan hanya user yang login yang bisa ekspor
+
+        if (!isset($_GET['table'])) {
+            die("Error: Nama tabel tidak ditentukan.");
+        }
+
+        $tableName = $_GET['table'];
+
+        $logModel = new LogModel(getDbConnection());
+        $data = $logModel->getAllDataForExport($tableName);
+
+        if ($data === false) {
+            die("Error: Tabel tidak valid atau tidak diizinkan untuk diekspor.");
+        }
+
+        if (empty($data)) {
+            // Redirect kembali ke dashboard jika tidak ada data untuk diekspor
+            header("Location: index.php?action=dashboard&export_status=empty");
+            exit;
+        }
+
+        $filename = "export_" . $tableName . "_" . date('Y-m-d') . ".csv";
+
+        // Set header agar browser men-download file
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $output = fopen('php://output', 'w');
+
+        // Tulis baris header (nama kolom)
+        fputcsv($output, array_keys($data[0]));
+
+        // Tulis baris data
+        foreach ($data as $row) {
+            fputcsv($output, $row);
+        }
+
+        fclose($output);
+        exit;
+    }
+
+    private function checkAuth() {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit;
+        }
+    }
 }
 ?>

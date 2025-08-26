@@ -7,6 +7,7 @@ $action = $_GET['action'] ?? '';
 
 // Router
 require_once __DIR__ . '/../controllers/AuthController.php'; // Panggil AuthController di awal
+require_once __DIR__ . '/../controllers/DashboardController.php'; // Panggil DashboardController
 
 switch ($action) {
     case 'login':
@@ -29,10 +30,16 @@ switch ($action) {
         (new AuthController())->handleAdminUpdate();
         break;
 
+    case 'export':
+        (new DashboardController())->handleExport();
+        break;
+
     case 'dashboard':
     default:
         require_once __DIR__ . '/../controllers/DashboardController.php';
         (new DashboardController())->show();
         break;
+
+        
 }
 ?>

@@ -122,5 +122,23 @@ class LogModel {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getAllDataForExport($tableName) {
+        // Kita batasi tabel yang boleh diekspor untuk keamanan
+        $allowedTables = ['realtime_logs', 'error_logs', 'pages', 'ips', 'referrers'];
+        if (!in_array($tableName, $allowedTables)) {
+            return false; // Jika nama tabel tidak diizinkan, kembalikan false
+        }
+
+        // Urutkan berdasarkan kolom yang paling relevan
+        $orderBy = ($tableName === 'realtime_logs' || $tableName === 'error_logs') 
+            ? 'timestamp DESC' 
+            : 'hits DESC';
+
+        $query = "SELECT * FROM {$tableName} ORDER BY {$orderBy}";
+
+        $stmt = $this->pdo->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>
