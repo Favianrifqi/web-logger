@@ -40,9 +40,14 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
             <div class="card"><h2>Total Permintaan (Hits)</h2><p><?= number_format($summary['total_hits']) ?></p></div>
             <div class="card"><h2>Status Codes</h2><p><?php if(empty($allStatusCodes)){ echo '<span>-</span>'; } else { foreach($allStatusCodes as $status){ echo '<span class="status-code status-'. substr($status['code'], 0, 1) .'xx">'. $status['code'] .': '. number_format($status['hits']) .'</span>'; } } ?></p></div>
         </div>
+        <div class="card" style="margin-bottom: 20px;">
+            <h2>Tren Aktivitas 7 Hari Terakhir</h2>
+        <div class="chart-container" style="height: 350px;">
+            <canvas id="historicalChart"></canvas>
+        </div>
+    </div>
 
         <div class="dashboard-grid">
-            
             <div class="main-column">
                 <div class="table-card" id="aktivitas-terbaru">
                     <h2>Aktivitas Terbaru</h2>
@@ -109,6 +114,49 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
             createChart(popularPagesCtx, { type: 'bar', data: { labels: popularPagesChartData.labels, datasets: [{ label: 'Jumlah Hits', data: popularPagesChartData.data, backgroundColor: 'rgba(54, 162, 235, 0.6)' }] }, options: { indexAxis: 'y', scales: { x: { beginAtZero: true }, y: {} }, plugins: { legend: { display: false } }, maintainAspectRatio: false } });
             createChart(browserCtx, { type: 'pie', data: { labels: browserChartData.labels, datasets: [{ data: browserChartData.data, backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } } });
             createChart(osCtx, { type: 'doughnut', data: { labels: osChartData.labels, datasets: [{ data: osChartData.data, backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } } });
+
+            const historicalCtx = document.getElementById('historicalChart')?.getContext('2d');
+        const historicalDataRaw = <?= json_encode($historicalData); ?>;
+
+        const historicalLabels = historicalDataRaw.map(d => d.date);
+        const uniqueVisitorsData = historicalDataRaw.map(d => d.unique_visitors);
+        const totalHitsData = historicalDataRaw.map(d => d.total_hits);
+
+        createChart(historicalCtx, {
+            type: 'line',
+            data: {
+                labels: historicalLabels,
+                datasets: [
+                    {
+                        label: 'Pengunjung Unik',
+                        data: uniqueVisitorsData,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Total Hits',
+                        data: totalHitsData,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { beginAtZero: true },
+                    y: { beginAtZero: true }
+                },
+                plugins: {
+                    legend: { position: 'top' }
+                }
+            }
+        });
         });
     </script>
 </body>

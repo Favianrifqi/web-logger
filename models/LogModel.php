@@ -54,5 +54,12 @@ class LogModel {
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return ['labels' => array_column($result, 'name'), 'data' => array_column($result, 'hits')];
     }
+
+    public function getHistoricalSummary($days = 7) {
+        $stmt = $this->pdo->prepare("SELECT date, unique_visitors, total_hits FROM daily_summary WHERE date >= CURDATE() - INTERVAL :days DAY ORDER BY date ASC");
+        $stmt->bindValue(':days', $days, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>

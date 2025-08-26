@@ -49,7 +49,8 @@ class DashboardController {
             'chartData' => $logModel->getTopPagesForChart(7),
             'browserChartData' => $logModel->getTopStats('browsers', 7),
             'osChartData' => $logModel->getTopStats('operating_systems', 7),
-            'paginationData' => $paginationData // Kirim data paginasi ke view
+            'paginationData' => $paginationData,
+            'historicalData' => $logModel->getHistoricalSummary(7)
         ];
         
         extract($data);
