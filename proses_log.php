@@ -1,5 +1,5 @@
 <?php
-// proses_log.php (VERSI FINAL DENGAN HISTORY)
+// proses_log.php (VERSI FINAL DENGAN LOGIKA HISTORY)
 
 date_default_timezone_set('Asia/Jakarta');
 
@@ -64,28 +64,35 @@ try {
     
     // Inisialisasi variabel agregasi
     $pages = []; $ips = []; $status_codes = []; $browsers = []; $operating_systems = []; $referrers = [];
-    $uniqueVisitorsToday = []; $totalHitsToday = 0; 
+    $dailyHits = []; $dailyUniqueVisitors = [];
     $realtimeBuffer = []; $errorBuffer = []; $ipCache = [];
 
     // Proses parsing file log
     $handle = fopen($logFilePath, 'r');
     if ($handle) {
+        $lastProcessedTimestamp = $pdo->query("SELECT MAX(timestamp) FROM realtime_logs")->fetchColumn() ?: '1970-01-01 00:00:00';
+        
         $regex = '/^(\S+) \S+ \S+ \[([^\]]+)\] "(?:[A-Z]+) (\S+) \S+" (\d+) \d+ "([^"]*)" "([^"]*)"/';
         while (($line = fgets($handle)) !== false) {
             if (preg_match($regex, $line, $matches)) {
                 list(, $ip, $timestampStr, $url, $status, $referrer, $userAgent) = $matches;
                 
                 $dt = DateTime::createFromFormat('d/M/Y:H:i:s O', $timestampStr);
-                if (!$dt) continue; // Lewati baris jika format tanggal salah
+                if (!$dt) continue;
                 
                 $timestamp = $dt->format('Y-m-d H:i:s');
+                
+                // Hanya proses log baru yang belum pernah diproses
+                if ($timestamp <= $lastProcessedTimestamp) continue;
+
+                $date = $dt->format('Y-m-d');
                 $status = (int)$status;
-                $totalHitsToday++;
-                $uniqueVisitorsToday[$ip] = true;
+                
+                $dailyHits[$date] = ($dailyHits[$date] ?? 0) + 1;
+                $dailyUniqueVisitors[$date][$ip] = true;
 
                 $urlForDb = (strlen($url) > 767) ? substr($url, 0, 767) : $url;
                 
-                // Agregasi data di dalam array
                 $pages[$urlForDb] = ($pages[$urlForDb] ?? 0) + 1;
                 $ips[$ip] = ($ips[$ip] ?? 0) + 1;
                 $status_codes[$status] = ($status_codes[$status] ?? 0) + 1;
@@ -110,10 +117,14 @@ try {
         }
         fclose($handle);
 
+        if (empty($realtimeBuffer)) {
+            exit; // Tidak ada log baru, keluar.
+        }
+
         // Memulai transaksi database
         $pdo->beginTransaction();
 
-        // LOGIKA BARU: Gunakan INSERT ... ON DUPLICATE KEY UPDATE untuk mengakumulasi data
+        // Gunakan INSERT ... ON DUPLICATE KEY UPDATE untuk mengakumulasi data
         $stmtPages = $pdo->prepare("INSERT INTO pages (url, hits) VALUES (?, ?) ON DUPLICATE KEY UPDATE hits = hits + VALUES(hits)");
         foreach ($pages as $url => $hits) { $stmtPages->execute([$url, $hits]); }
         
@@ -132,31 +143,32 @@ try {
         $stmtRef = $pdo->prepare("INSERT INTO referrers (domain, hits) VALUES (?, ?) ON DUPLICATE KEY UPDATE hits = hits + VALUES(hits)");
         foreach ($referrers as $domain => $hits) { $stmtRef->execute([$domain, $hits]); }
 
-        // Untuk daily summary, kita tetap pakai REPLACE karena datanya dihitung ulang per hari
-        $pdo->prepare("REPLACE INTO daily_summary (date, unique_visitors, total_hits) VALUES (?, ?, ?)")->execute([date('Y-m-d'), count($uniqueVisitorsToday), $totalHitsToday]);
+        // Update daily summary untuk setiap hari yang terpengaruh
+        $stmtSummary = $pdo->prepare("INSERT INTO daily_summary (date, unique_visitors, total_hits) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE unique_visitors = unique_visitors + VALUES(unique_visitors), total_hits = total_hits + VALUES(total_hits)");
+        foreach ($dailyHits as $date => $hits) {
+            $uniqueCount = count($dailyUniqueVisitors[$date]);
+            $stmtSummary->execute([$date, $uniqueCount, $hits]);
+        }
 
-        // Masukkan log terbaru, tapi jangan hapus yang lama
-        $latestLogs = array_slice($realtimeBuffer, -100); // Ambil 100 log terbaru
+        // Masukkan log terbaru
         $stmtRealtime = $pdo->prepare("INSERT INTO realtime_logs (timestamp, ip, country, url, status) VALUES (?, ?, ?, ?, ?)");
-        foreach ($latestLogs as $log) { 
+        foreach ($realtimeBuffer as $log) { 
             $country = getGeoIpInfo($log['ip'], $ipCache); 
             $stmtRealtime->execute([$log['timestamp'], $log['ip'], $country, $log['url'], $log['status']]); 
         }
         
-        $latestErrors = array_slice($errorBuffer, -100); // Ambil 100 error terbaru
         $stmtError = $pdo->prepare("INSERT INTO error_logs (timestamp, ip, url, status) VALUES (?, ?, ?, ?)");
-        foreach ($latestErrors as $error) { 
+        foreach ($errorBuffer as $error) { 
             $stmtError->execute([$error['timestamp'], $error['ip'], $error['url'], $error['status']]); 
         }
 
-        // LOGIKA BARU: Bersihkan log yang lebih lama dari 7 hari
+        // Bersihkan log yang lebih lama dari 7 hari
         $pdo->exec("DELETE FROM realtime_logs WHERE timestamp < NOW() - INTERVAL 7 DAY");
         $pdo->exec("DELETE FROM error_logs WHERE timestamp < NOW() - INTERVAL 7 DAY");
 
         $pdo->commit();
     }
 } catch (PDOException $e) {
-    // Keluar diam-diam jika ada error DB, agar cron tidak mengirim email
-    exit;
+    exit; // Keluar diam-diam jika ada error DB
 }
 ?>
