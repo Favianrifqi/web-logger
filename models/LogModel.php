@@ -33,7 +33,7 @@ class LogModel {
     public function getLogs($table, $limit, $offset, $searchTerm = '', $startDate = '', $endDate = '') {
         $params = [];
         $whereClause = $this->buildWhereClause($params, $startDate, $endDate, $searchTerm, 'timestamp');
-        $sql = "SELECT * FROM {$table} {$whereClause} ORDER BY timestamp DESC LIMIT :limit OFFSET :offset";
+        $sql = "SELECT * FROM {$table} {$whereClause} ORDER BY timestamp ASC LIMIT :limit OFFSET :offset";
         
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
