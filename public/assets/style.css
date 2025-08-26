@@ -324,64 +324,83 @@ footer {
 /* ======================================= */
 
 .table-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap; /* Agar responsif di layar kecil */
-  gap: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* Agar responsif di layar kecil */
+    gap: 10px;
 }
 
 .table-header h2 {
-  margin: 0;
+    margin: 0;
 }
 
-.search-form {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.filter-form {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Sedikit lebih renggang */
+    flex-wrap: wrap;
 }
 
-.search-form input[type='search'] {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
-  background-color: #333;
-  color: var(--text-color);
-  font-family: 'Poppins', sans-serif;
-  min-width: 250px;
+.filter-form .form-group-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.search-form input[type='search']:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(54, 162, 235, 0.4);
+.filter-form label {
+    font-weight: 500;
+    color: var(--text-muted-color);
 }
 
-.search-form button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  background-color: var(--primary-color);
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
+.filter-form input[type="search"],
+.filter-form input[type="date"] {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background-color: #333;
+    color: var(--text-color);
+    font-family: 'Poppins', sans-serif;
+    color-scheme: dark; /* Agar kalender date picker juga gelap */
 }
 
-.search-form button:hover {
-  background-color: #2a8cd1;
+.filter-form input[type="search"] {
+    min-width: 250px;
 }
 
-.search-form .clear-search {
-  color: var(--text-muted-color);
-  text-decoration: none;
-  font-size: 14px;
+.filter-form input[type="search"]:focus,
+.filter-form input[type="date"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(54, 162, 235, 0.4);
 }
 
-.search-form .clear-search:hover {
-  color: var(--text-color);
-  text-decoration: underline;
+.filter-form button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.filter-form button:hover {
+    background-color: #2a8cd1;
+}
+
+.filter-form .clear-search {
+    color: var(--text-muted-color);
+    text-decoration: none;
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+.filter-form .clear-search:hover {
+    color: var(--text-color);
+    text-decoration: underline;
 }
 
 /* ======================================= */
