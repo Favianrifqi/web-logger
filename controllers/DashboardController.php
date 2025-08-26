@@ -1,4 +1,5 @@
 <?php
+// controllers/DashboardController.php (VERSI DENGAN FILTER TANGGAL)
 
 require_once __DIR__ . '/../models/LogModel.php';
 
@@ -14,9 +15,11 @@ class DashboardController {
         $logModel = new LogModel(getDbConnection());
         $rowsPerPage = 10;
 
-        // Ambil term pencarian dari URL, bersihkan untuk keamanan
+        // Ambil dan validasi input dari URL
         $searchTerm = isset($_GET['q']) ? trim(htmlspecialchars($_GET['q'])) : '';
-        
+        $startDate = isset($_GET['start_date']) && !empty($_GET['start_date']) ? $_GET['start_date'] : '';
+        $endDate = isset($_GET['end_date']) && !empty($_GET['end_date']) ? $_GET['end_date'] : '';
+
         // Menyiapkan data paginasi
         $pageParams = [
             'page_realtime' => 'realtime_logs', 
@@ -28,12 +31,16 @@ class DashboardController {
         
         $paginationData = [];
         foreach ($pageParams as $param => $table) {
-            $currentPage = isset($_GET[$param]) ? (int)$_GET[$param] : 1; // Halaman saat ini
-            $offset = ($currentPage - 1) * $rowsPerPage; // Offset untuk query
-            $searchableTables = ['realtime_logs', 'error_logs']; // Tabel yang mendukung pencarian
-            $currentSearchTerm = in_array($table, $searchableTables) ? $searchTerm : ''; // Gunakan searchTerm saat menghitung total baris untuk tabel yang difilter
-            $totalRows = $logModel->getTotalRows($table, $currentSearchTerm); // Total baris untuk tabel ini
-            // Menyimpan data paginasi untuk setiap tabel
+            $currentPage = isset($_GET[$param]) ? (int)$_GET[$param] : 1;
+            $offset = ($currentPage - 1) * $rowsPerPage;
+            
+            $searchableTables = ['realtime_logs', 'error_logs'];
+            $currentSearchTerm = in_array($table, $searchableTables) ? $searchTerm : '';
+            // Hanya tabel log yang difilter tanggal
+            $currentStartDate = in_array($table, $searchableTables) ? $startDate : '';
+            $currentEndDate = in_array($table, $searchableTables) ? $endDate : '';
+            $totalRows = $logModel->getTotalRows($table, $currentSearchTerm, $currentStartDate, $currentEndDate);
+            
             $paginationData[$param] = [
                 'currentPage' => $currentPage,
                 'offset' => $offset,
@@ -41,23 +48,23 @@ class DashboardController {
             ];
         }
 
-        // Mengambil semua data untuk ditampilkan
+        // Mengambil semua data untuk ditampilkan dengan filter
         $data = [
-            'searchTerm' => $searchTerm, // Kirim searchTerm ke view
-            'summary' => $logModel->getSummary(), // ringkasan harian
-            'allStatusCodes' => $logModel->getAllStatusCodes(), // semua kode status
-            'realtimeLogs' => $logModel->getLogs('realtime_logs', $rowsPerPage, $paginationData['page_realtime']['offset'], $searchTerm), // tabel realtime_logs mendukung pencarian
-            'errorLogs' => $logModel->getLogs('error_logs', $rowsPerPage, $paginationData['page_error']['offset'], $searchTerm), // tabel error_logs mendukung pencarian
-            'topPages' => $logModel->getTopItems('pages', 'url', $rowsPerPage, $paginationData['page_popular']['offset']), // tabel pages
-            'topIps' => $logModel->getTopItems('ips', 'ip', $rowsPerPage, $paginationData['page_ips']['offset']), // tabel ips
-            'topReferrers' => $logModel->getTopItems('referrers', 'domain', $rowsPerPage, $paginationData['page_referrers']['offset']), // tabel referrers
-            'chartData' => $logModel->getTopPagesForChart(7), // data grafik halaman teratas
-            'browserChartData' => $logModel->getTopStats('browsers', 7), // data grafik browser
-            'osChartData' => $logModel->getTopStats('operating_systems', 7), // data grafik OS
-            'historicalData' => $logModel->getHistoricalSummary(7), // ringkasan historis
-            'paginationData' => $paginationData // data paginasi untuk semua tabel 
+            'searchTerm' => $searchTerm,
+            'summary' => $logModel->getSummary($startDate, $endDate),
+            'allStatusCodes' => $logModel->getAllStatusCodes(),
+            'realtimeLogs' => $logModel->getLogs('realtime_logs', $rowsPerPage, $paginationData['page_realtime']['offset'], $searchTerm, $startDate, $endDate),
+            'errorLogs' => $logModel->getLogs('error_logs', $rowsPerPage, $paginationData['page_error']['offset'], $searchTerm, $startDate, $endDate),
+            'topPages' => $logModel->getTopItems('pages', 'url', $rowsPerPage, $paginationData['page_popular']['offset']),
+            'topIps' => $logModel->getTopItems('ips', 'ip', $rowsPerPage, $paginationData['page_ips']['offset']),
+            'topReferrers' => $logModel->getTopItems('referrers', 'domain', $rowsPerPage, $paginationData['page_referrers']['offset']),
+            'chartData' => $logModel->getTopPagesForChart(7),
+            'browserChartData' => $logModel->getTopStats('browsers', 7),
+            'osChartData' => $logModel->getTopStats('operating_systems', 7),
+            'historicalData' => $logModel->getHistoricalSummary(7),
+            'paginationData' => $paginationData
         ];
-         // Memuat view dan mengoper data
+        
         extract($data);
         require_once __DIR__ . '/../views/dashboard.php';
     }

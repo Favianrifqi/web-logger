@@ -1,60 +1,86 @@
 <?php
+// models/LogModel.php (VERSI FINAL - LENGKAP DENGAN FILTER TANGGAL)
 
 class LogModel {
     private $pdo;
 
-    // fungsi konstruktor
     public function __construct($pdo) {
         $this->pdo = $pdo;
     }
     
-    // fungsi untuk mendapatkan log dengan fitur pencarian
-    public function getLogs($table, $limit, $offset, $searchTerm = '') {
-        $sql = "SELECT * FROM {$table}";
-        $params = [];
-
+    private function buildWhereClause(array &$params, $startDate, $endDate, $searchTerm = '', $dateColumn = 'timestamp') {
+        $whereClauses = [];
+        if (!empty($startDate)) {
+            $whereClauses[] = "DATE({$dateColumn}) >= :start_date";
+            $params[':start_date'] = $startDate;
+        }
+        if (!empty($endDate)) {
+            $whereClauses[] = "DATE({$dateColumn}) <= :end_date";
+            $params[':end_date'] = $endDate;
+        }
         if (!empty($searchTerm)) {
-            $sql .= " WHERE ip LIKE :term OR url LIKE :term OR status LIKE :term OR country LIKE :term";
+            $searchableColumns = ['ip', 'url', 'status', 'country'];
+            $searchClauses = [];
+            foreach ($searchableColumns as $col) {
+                $searchClauses[] = "{$col} LIKE :term";
+            }
+            $whereClauses[] = "(" . implode(' OR ', $searchClauses) . ")";
             $params[':term'] = '%' . $searchTerm . '%';
         }
+        return count($whereClauses) > 0 ? " WHERE " . implode(' AND ', $whereClauses) : "";
+    }
 
-        $sql .= " ORDER BY timestamp DESC LIMIT :limit OFFSET :offset";
+    public function getLogs($table, $limit, $offset, $searchTerm = '', $startDate = '', $endDate = '') {
+        $params = [];
+        $whereClause = $this->buildWhereClause($params, $startDate, $endDate, $searchTerm, 'timestamp');
+        $sql = "SELECT * FROM {$table} {$whereClause} ORDER BY timestamp DESC LIMIT :limit OFFSET :offset";
         
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-        if (!empty($searchTerm)) {
-            $stmt->bindValue(':term', $params[':term']);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
         }
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // fungsi untuk mendapatkan total baris dengan fitur pencarian
-    public function getTotalRows($tableName, $searchTerm = '') {
-        $sql = "SELECT COUNT(*) FROM {$tableName}";
+    public function getTotalRows($tableName, $searchTerm = '', $startDate = '', $endDate = '') {
         $params = [];
-
-        if (!empty($searchTerm)) {
-            $sql .= " WHERE ip LIKE :term OR url LIKE :term OR status LIKE :term OR country LIKE :term";
-            $params[':term'] = '%' . $searchTerm . '%';
-        }
+        $dateColumn = ($tableName === 'daily_summary') ? 'date' : 'timestamp';
+        // Untuk tabel summary, pencarian tidak relevan
+        $currentSearchTerm = in_array($tableName, ['realtime_logs', 'error_logs']) ? $searchTerm : '';
+        $whereClause = $this->buildWhereClause($params, $startDate, $endDate, $currentSearchTerm, $dateColumn);
+        $sql = "SELECT COUNT(*) FROM {$tableName} {$whereClause}";
 
         $stmt = $this->pdo->prepare($sql);
-        if (!empty($searchTerm)) {
-            $stmt->bindValue(':term', $params[':term']);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
         }
         $stmt->execute();
         return $stmt->fetchColumn();
     }
 
-    // fungsi untuk mendapatkan ringkasan harian
-    public function getSummary() {
-        $stmt = $this->pdo->query("SELECT * FROM daily_summary ORDER BY date DESC LIMIT 1");
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?: ['unique_visitors' => 0, 'total_hits' => 0, 'date' => date('Y-m-d')];
+    public function getSummary($startDate = '', $endDate = '') {
+        $params = [];
+        $whereClause = $this->buildWhereClause($params, $startDate, $endDate, '', 'date');
+        $sql = "SELECT SUM(unique_visitors) as unique_visitors, SUM(total_hits) as total_hits, MAX(date) as date FROM daily_summary {$whereClause}";
+        
+        $stmt = $this->pdo->prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        $stmt->execute();
+        
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        // Pastikan nilai tidak null jika tidak ada hasil
+        return [
+            'unique_visitors' => $result['unique_visitors'] ?? 0,
+            'total_hits' => $result['total_hits'] ?? 0,
+            'date' => $result['date'] ?? date('Y-m-d')
+        ];
     }
     
-    // fungsi untuk mendapatkan item teratas
     public function getTopItems($table, $column, $limit, $offset) {
         $stmt = $this->pdo->prepare("SELECT {$column}, hits FROM {$table} ORDER BY hits DESC LIMIT :limit OFFSET :offset");
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
@@ -63,12 +89,10 @@ class LogModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // fungsi untuk mendapatkan semua kode status
     public function getAllStatusCodes() {
         return $this->pdo->query("SELECT code, hits FROM status_codes ORDER BY code ASC")->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // fungsi untuk mendapatkan data grafik halaman teratas
     public function getTopPagesForChart($limit) {
         $pages = $this->getTopItems('pages', 'url', $limit, 0);
         $labels = array_map(function($p) {
@@ -79,7 +103,6 @@ class LogModel {
         return ['labels' => $labels, 'data' => array_column($pages, 'hits')];
     }
     
-    // fungsi untuk mendapatkan statistik teratas (browser atau OS)
     public function getTopStats($table, $limit) {
         $stmt = $this->pdo->prepare("SELECT name, hits FROM {$table} ORDER BY hits DESC LIMIT :limit");
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
@@ -88,7 +111,6 @@ class LogModel {
         return ['labels' => array_column($result, 'name'), 'data' => array_column($result, 'hits')];
     }
 
-    // fungsi untuk mendapatkan ringkasan historis
     public function getHistoricalSummary($days = 7) { 
         $stmt = $this->pdo->prepare("SELECT date, unique_visitors, total_hits FROM daily_summary WHERE date >= CURDATE() - INTERVAL :days DAY ORDER BY date ASC");
         $stmt->bindValue(':days', $days, PDO::PARAM_INT);
