@@ -47,21 +47,22 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
         <div class="dashboard-grid">
             <div class="main-column">
                 <div class="table-card" id="aktivitas-terbaru">
-    <div class="table-header">
-        <h2>Aktivitas Terbaru</h2>
-        <a href="index.php?action=export&table=realtime_logs" class="export-button">Ekspor CSV</a>
-    </div>
-    <div class="filter-controls"> <form action="index.php" method="GET" class="filter-form">
-            <input type="hidden" name="action" value="dashboard">
-            <div class="form-group-inline"><label for="start_date">Dari:</label><input type="date" name="start_date" id="start_date" value="<?= $_GET['start_date'] ?? '' ?>"></div>
-            <div class="form-group-inline"><label for="end_date">Sampai:</label><input type="date" name="end_date" id="end_date" value="<?= $_GET['end_date'] ?? '' ?>"></div>
-            <input type="search" name="q" placeholder="Cari IP, URL, Status..." value="<?= $searchTerm ?? '' ?>">
-            <button type="submit">Filter & Cari</button>
-            <?php if (!empty($searchTerm) || !empty($_GET['start_date']) || !empty($_GET['end_date'])): ?>
-                <a href="index.php?action=dashboard" class="clear-search">Reset Filter</a>
-            <?php endif; ?>
-        </form>
-    </div>
+                    <div class="table-header">
+                        <h2>Aktivitas Terbaru</h2>
+                        <a href="index.php?action=export&table=realtime_logs" class="export-button">Ekspor CSV</a>
+                    </div>
+                    <div class="filter-controls">
+                        <form action="index.php" method="GET" class="filter-form">
+                            <input type="hidden" name="action" value="dashboard">
+                            <div class="form-group-inline"><label for="start_date">Dari:</label><input type="date" name="start_date" id="start_date" value="<?= $_GET['start_date'] ?? '' ?>"></div>
+                            <div class="form-group-inline"><label for="end_date">Sampai:</label><input type="date" name="end_date" id="end_date" value="<?= $_GET['end_date'] ?? '' ?>"></div>
+                            <input type="search" name="q" placeholder="Cari IP, URL, Status..." value="<?= $searchTerm ?? '' ?>">
+                            <button type="submit">Filter & Cari</button>
+                            <?php if (!empty($searchTerm) || !empty($_GET['start_date']) || !empty($_GET['end_date'])): ?>
+                                <a href="index.php?action=dashboard" class="clear-search">Reset Filter</a>
+                            <?php endif; ?>
+                        </form>
+                    </div>
                     <table>
                         <thead><tr><th>Waktu</th><th>Alamat IP</th><th>Negara</th><th>URL</th><th>Status</th></tr></thead>
                         <tbody><?php foreach ($realtimeLogs as $log): ?><tr><td><?= htmlspecialchars($log['timestamp']) ?></td><td><a href="index.php?action=dashboard&q=<?= htmlspecialchars($log['ip']) ?>"><?= htmlspecialchars($log['ip']) ?></a></td><td><?= htmlspecialchars($log['country']) ?></td><td class="url-cell" title="<?= htmlspecialchars($log['url']) ?>"><?= htmlspecialchars(substr($log['url'], 0, 50)) ?>...</td><td><span class="status-code status-<?= substr($log['status'], 0, 1) ?>xx"><?= htmlspecialchars($log['status']) ?></span></td></tr><?php endforeach; ?></tbody>
@@ -129,7 +130,6 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
     
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // ... (Kode JavaScript lengkap Anda tidak perlu diubah)
             const createChart = (ctx, config) => { if(ctx) new Chart(ctx, config); };
             const popularPagesCtx = document.getElementById('popularPagesChart')?.getContext('2d');
             const browserCtx = document.getElementById('browserChart')?.getContext('2d');

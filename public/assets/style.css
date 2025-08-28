@@ -1,20 +1,27 @@
-/* public/assets/style.css */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+/* public/assets/style.css (VERSI FINAL LENGKAP) */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
+/* ======================================= */
+/* ========== ROOT VARIABLES ============= */
+/* ======================================= */
 :root {
   --bg-color: #1a1a1a;
   --card-bg-color: #2c2c2c;
   --text-color: #e0e0e0;
   --text-muted-color: #999;
   --border-color: #444;
+
   --primary-color: #36a2eb;
   --green-color: #4bc0c0;
   --orange-color: #ff9f40;
   --red-color: #ff6384;
 }
 
+/* ======================================= */
+/* ============ BASE STYLES ============== */
+/* ======================================= */
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   background-color: var(--bg-color);
   color: var(--text-color);
   margin: 0;
@@ -36,7 +43,7 @@ header {
 header h1 {
   margin: 0;
   font-size: 2.5rem;
-  color: white;
+  color: #fff;
 }
 
 header p {
@@ -47,12 +54,15 @@ header p {
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: var(--red-color);
-  color: white;
   padding: 8px 16px;
-  text-decoration: none;
+
+  background-color: var(--red-color);
+  color: #fff;
   border-radius: 6px;
+
   font-weight: 500;
+  text-decoration: none;
+
   transition: background-color 0.2s;
 }
 
@@ -61,21 +71,28 @@ header p {
 }
 
 .card {
-  background-color: var(--card-bg-color);
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+  background-color: var(--card-bg-color);
   border: 1px solid var(--border-color);
+  border-radius: 10px;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* ======================================= */
 /* ===== LAYOUT BARU UNTUK DASHBOARD ===== */
 /* ======================================= */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
 
-/* Untuk layout grid baru di dashboard */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr; /* Kolom kiri lebih lebar */
+  grid-template-columns: 2fr 1fr;
   gap: 20px;
   align-items: start;
 }
@@ -93,15 +110,15 @@ header p {
   gap: 20px;
 }
 
-/* Penyesuaian untuk layar lebih kecil (tablet ke bawah) */
 @media (max-width: 1200px) {
   .dashboard-grid {
-    grid-template-columns: 1fr; /* Kembali ke 1 kolom */
+    grid-template-columns: 1fr;
   }
 }
+
 @media (max-width: 768px) {
   .chart-grid {
-    grid-template-columns: 1fr; /* Chart juga menjadi 1 kolom */
+    grid-template-columns: 1fr;
   }
 }
 
@@ -118,8 +135,11 @@ header p {
   font-weight: 600;
 }
 
+/* ======================================= */
+/* ============ TABLE STYLES ============= */
+/* ======================================= */
 .table-card {
-  margin-bottom: 0; /* Dihapus karena gap sudah diatur oleh grid */
+  margin-bottom: 0;
 }
 
 table {
@@ -155,25 +175,30 @@ tbody tr:hover {
 .status-code {
   padding: 4px 8px;
   border-radius: 4px;
-  color: white;
+
+  color: #fff;
   font-weight: 500;
 }
+
 .status-2xx {
   background-color: var(--green-color);
 }
+
 .status-3xx {
   background-color: var(--primary-color);
 }
+
 .status-4xx {
   background-color: var(--orange-color);
 }
+
 .status-5xx {
   background-color: var(--red-color);
 }
 
 .pagination {
   margin-top: 15px;
-  text-align: center; /* <-- Menjadi 'center' */
+  text-align: center;
 }
 
 .pagination a,
@@ -181,8 +206,10 @@ tbody tr:hover {
   display: inline-block;
   padding: 8px 12px;
   margin-left: 5px;
+
   border-radius: 4px;
   text-decoration: none;
+
   color: var(--text-color);
   background-color: #444;
 }
@@ -219,9 +246,8 @@ footer {
 }
 
 /* ======================================= */
-/* ===== STYLES FOR LOGIN & ADMIN PAGE ===== */
+/* ===== STYLES FOR LOGIN & ADMIN PAGE ==== */
 /* ======================================= */
-
 .login-body {
   display: flex;
   justify-content: center;
@@ -230,16 +256,17 @@ footer {
 }
 
 .login-card {
-  background-color: var(--card-bg-color);
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 420px;
+  padding: 40px;
   box-sizing: border-box;
+
+  background-color: var(--card-bg-color);
+  border-radius: 10px;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Perbaikan untuk admin panel agar lebih lebar */
 .admin-card {
   max-width: 900px;
 }
@@ -248,6 +275,7 @@ footer {
 .login-card h2 {
   margin-top: 0;
   margin-bottom: 24px;
+
   text-align: center;
   font-size: 24px;
 }
@@ -259,17 +287,21 @@ footer {
 .form-group label {
   display: block;
   margin-bottom: 8px;
+
   font-weight: 500;
 }
 
 .form-group input {
   width: 100%;
   padding: 12px;
+  box-sizing: border-box;
+
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+
+  font-family: "Poppins", sans-serif;
   font-size: 16px;
+
   background-color: #333;
   color: var(--text-color);
 }
@@ -288,12 +320,16 @@ footer {
 .btn-submit {
   width: 100%;
   padding: 12px;
+
   border: none;
   border-radius: 6px;
+
   background-color: var(--primary-color);
-  color: white;
+  color: #fff;
+
   font-size: 18px;
   font-weight: 600;
+
   cursor: pointer;
   transition: background-color 0.2s;
 }
@@ -303,27 +339,29 @@ footer {
 }
 
 .login-error {
-  background-color: #4d2323;
-  color: #ffcdd2;
   padding: 10px;
-  border-radius: 6px;
-  text-align: center;
   margin-bottom: 20px;
+
+  background-color: #4d2323;
   border: 1px solid var(--red-color);
+  border-radius: 6px;
+
+  color: #ffcdd2;
   font-size: 14px;
+  text-align: center;
 }
 
-/* ======================================================= */
-/* === STYLE UNTUK FILTER, JUDUL & TOMBOL EKSPOR (BARU) === */
-/* ======================================================= */
-
+/* ============================================== */
+/* === STYLE BARU UNTUK FILTER DAN PENCARIAN === */
+/* ============================================== */
 .table-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px; /* Jarak antara judul dan area filter */
+
   flex-wrap: wrap;
   gap: 10px;
+  margin-bottom: 10px;
 }
 
 .table-header h2 {
@@ -331,17 +369,18 @@ footer {
 }
 
 .filter-controls {
-  background-color: #333;
   padding: 15px;
+  margin-bottom: 20px;
+
+  background-color: #333;
   border-radius: 8px;
-  margin-bottom: 20px; /* Jarak antara area filter dan tabel di bawahnya */
 }
 
 .filter-form {
   display: flex;
   align-items: center;
-  gap: 15px;
   flex-wrap: wrap;
+  gap: 15px;
 }
 
 .filter-form .form-group-inline {
@@ -355,22 +394,25 @@ footer {
   color: var(--text-muted-color);
 }
 
-.filter-form input[type='search'],
-.filter-form input[type='date'] {
+.filter-form input[type="search"],
+.filter-form input[type="date"] {
   padding: 8px 12px;
-  border-radius: 6px;
+
   border: 1px solid var(--border-color);
-  background-color: #2c2c2c; /* Disesuaikan dengan warna kartu */
+  border-radius: 6px;
+
+  font-family: "Poppins", sans-serif;
   color: var(--text-color);
-  font-family: 'Poppins', sans-serif;
+
+  background-color: #2c2c2c;
 }
 
-.filter-form input[type='search'] {
+.filter-form input[type="search"] {
   min-width: 250px;
 }
 
-.filter-form input[type='search']:focus,
-.filter-form input[type='date']:focus {
+.filter-form input[type="search"]:focus,
+.filter-form input[type="date"]:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(54, 162, 235, 0.4);
@@ -378,12 +420,16 @@ footer {
 
 .filter-form button {
   padding: 8px 16px;
+
   border: none;
   border-radius: 6px;
+
   background-color: var(--primary-color);
-  color: white;
+  color: #fff;
+
   font-weight: 500;
   cursor: pointer;
+
   transition: background-color 0.2s;
 }
 
@@ -392,10 +438,11 @@ footer {
 }
 
 .filter-form .clear-search {
-  color: var(--text-muted-color);
-  text-decoration: none;
-  font-size: 14px;
   margin-left: 5px;
+
+  color: var(--text-muted-color);
+  font-size: 14px;
+  text-decoration: none;
 }
 
 .filter-form .clear-search:hover {
@@ -404,13 +451,17 @@ footer {
 }
 
 .export-button {
-  background-color: var(--green-color);
-  color: white;
   padding: 5px 12px;
+
+  background-color: var(--green-color);
+  color: #fff;
+
   font-size: 13px;
-  text-decoration: none;
-  border-radius: 5px;
   font-weight: 500;
+
+  border-radius: 5px;
+  text-decoration: none;
+
   transition: background-color 0.2s;
 }
 
@@ -418,10 +469,25 @@ footer {
   background-color: #3aa0a0;
 }
 
+/* Calendar Icon Fix */
+.filter-form input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+.filter-form input[type="date"]::-webkit-datetime-edit-text,
+.filter-form input[type="date"]::-webkit-datetime-edit-month-field,
+.filter-form input[type="date"]::-webkit-datetime-edit-day-field,
+.filter-form input[type="date"]::-webkit-datetime-edit-year-field {
+  color: var(--text-muted-color);
+}
+
+.filter-form input[type="date"]:valid {
+  color: var(--text-color);
+}
+
 /* ======================================= */
 /* === TRIK FINAL UNTUK BROWSER AUTOFILL === */
 /* ======================================= */
-
 @-webkit-keyframes autofill {
   to {
     color: var(--text-color);
@@ -441,26 +507,11 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   -webkit-animation-name: autofill;
-  animation-name: autofill;
   -webkit-animation-fill-mode: both;
-  animation-fill-mode: both;
   -webkit-text-fill-color: var(--text-color) !important;
+
+  animation-name: autofill;
+  animation-fill-mode: both;
+
   caret-color: var(--text-color) !important;
-}
-
-.filter-form input[type='date']::-webkit-calendar-picker-indicator {
-  filter: invert(1);
-}
-
-/* Mengubah warna teks placeholder (dd/mm/yyyy) menjadi lebih terang */
-.filter-form input[type='date']::-webkit-datetime-edit-text,
-.filter-form input[type='date']::-webkit-datetime-edit-month-field,
-.filter-form input[type='date']::-webkit-datetime-edit-day-field,
-.filter-form input[type='date']::-webkit-datetime-edit-year-field {
-  color: var(--text-muted-color);
-}
-
-/* Mengubah warna teks setelah tanggal dipilih */
-.filter-form input[type='date']:valid {
-  color: var(--text-color);
 }
