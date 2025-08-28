@@ -12,6 +12,14 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
     if ($currentPage < $totalPages) echo '<a href="?'.http_build_query(array_merge($_GET, [$paramName => $currentPage + 1])).$anchor.'">&raquo;</a>';
     echo '</div>';
 }
+
+// Fungsi bantu baru untuk memotong teks URL dengan rapi
+function truncateUrl($url, $length = 50) {
+    if (strlen($url) > $length) {
+        return substr($url, 0, $length) . '...';
+    }
+    return $url;
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -65,7 +73,7 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
                     </div>
                     <table>
                         <thead><tr><th>Waktu</th><th>Alamat IP</th><th>Negara</th><th>URL</th><th>Status</th></tr></thead>
-                        <tbody><?php foreach ($realtimeLogs as $log): ?><tr><td><?= htmlspecialchars($log['timestamp']) ?></td><td><a href="index.php?action=dashboard&q=<?= htmlspecialchars($log['ip']) ?>"><?= htmlspecialchars($log['ip']) ?></a></td><td><?= htmlspecialchars($log['country']) ?></td><td class="url-cell" title="<?= htmlspecialchars($log['url']) ?>"><?= htmlspecialchars(substr($log['url'], 0, 50)) ?>...</td><td><span class="status-code status-<?= substr($log['status'], 0, 1) ?>xx"><?= htmlspecialchars($log['status']) ?></span></td></tr><?php endforeach; ?></tbody>
+                        <tbody><?php foreach ($realtimeLogs as $log): ?><tr><td><?= htmlspecialchars($log['timestamp']) ?></td><td><a href="index.php?action=dashboard&q=<?= htmlspecialchars($log['ip']) ?>"><?= htmlspecialchars($log['ip']) ?></a></td><td><?= htmlspecialchars($log['country']) ?></td><td class="url-cell" title="<?= htmlspecialchars($log['url']) ?>"><?= htmlspecialchars(truncateUrl($log['url'], 50)) ?></td><td><span class="status-code status-<?= substr($log['status'], 0, 1) ?>xx"><?= htmlspecialchars($log['status']) ?></span></td></tr><?php endforeach; ?></tbody>
                     </table>
                     <?php renderPagination($paginationData['page_realtime']['totalPages'], $paginationData['page_realtime']['currentPage'], 'page_realtime', 'aktivitas-terbaru'); ?>
                 </div>
@@ -77,7 +85,7 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
                     </div>
                     <table>
                         <thead><tr><th>Waktu</th><th>Alamat IP</th><th>URL Error</th><th>Status</th></tr></thead>
-                        <tbody><?php foreach ($errorLogs as $error): ?><tr><td><?= htmlspecialchars($error['timestamp']) ?></td><td><a href="index.php?action=dashboard&q=<?= htmlspecialchars($error['ip']) ?>"><?= htmlspecialchars($error['ip']) ?></a></td><td class="url-cell" title="<?= htmlspecialchars($error['url']) ?>"><?= htmlspecialchars(substr($error['url'], 0, 50)) ?>...</td><td><span class="status-code status-<?= substr($error['status'], 0, 1) ?>xx"><?= htmlspecialchars($error['status']) ?></span></td></tr><?php endforeach; ?></tbody>
+                        <tbody><?php foreach ($errorLogs as $error): ?><tr><td><?= htmlspecialchars($error['timestamp']) ?></td><td><a href="index.php?action=dashboard&q=<?= htmlspecialchars($error['ip']) ?>"><?= htmlspecialchars($error['ip']) ?></a></td><td class="url-cell" title="<?= htmlspecialchars($error['url']) ?>"><?= htmlspecialchars(truncateUrl($error['url'], 50)) ?></td><td><span class="status-code status-<?= substr($error['status'], 0, 1) ?>xx"><?= htmlspecialchars($error['status']) ?></span></td></tr><?php endforeach; ?></tbody>
                     </table>
                     <?php renderPagination($paginationData['page_error']['totalPages'], $paginationData['page_error']['currentPage'], 'page_error', 'detail-error'); ?>
                 </div>
@@ -92,7 +100,7 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
                     <div class="chart-container" style="height: 200px;"><canvas id="popularPagesChart"></canvas></div>
                     <table>
                         <thead><tr><th>URL</th><th>Hits</th></tr></thead>
-                        <tbody><?php foreach ($topPages as $page): ?><tr><td class="url-cell" title="<?= htmlspecialchars($page['url']) ?>"><?= htmlspecialchars(substr($page['url'], 0, 30)) ?>...</td><td><?= number_format($page['hits']) ?></td></tr><?php endforeach; ?></tbody>
+                        <tbody><?php foreach ($topPages as $page): ?><tr><td class="url-cell" title="<?= htmlspecialchars($page['url']) ?>"><?= htmlspecialchars(truncateUrl($page['url'], 30)) ?></td><td><?= number_format($page['hits']) ?></td></tr><?php endforeach; ?></tbody>
                     </table>
                     <?php renderPagination($paginationData['page_popular']['totalPages'], $paginationData['page_popular']['currentPage'], 'page_popular', 'halaman-populer'); ?>
                 </div>
@@ -127,7 +135,7 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
         
         <footer><p>Proyek Mini SIEM - KKN</p></footer>
     </div>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const createChart = (ctx, config) => { if(ctx) new Chart(ctx, config); };
