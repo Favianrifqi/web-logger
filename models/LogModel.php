@@ -123,21 +123,29 @@ class LogModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getAllDataForExport($tableName) {
-        // Kita batasi tabel yang boleh diekspor untuk keamanan
+    public function getAllDataForExport($tableName, $startDate = '', $endDate = '') {
         $allowedTables = ['realtime_logs', 'error_logs', 'pages', 'ips', 'referrers'];
         if (!in_array($tableName, $allowedTables)) {
-            return false; // Jika nama tabel tidak diizinkan, kembalikan false
+            return false;
         }
 
-        // Urutkan berdasarkan kolom yang paling relevan
+        $params = [];
+        $whereClause = '';
+        if (in_array($tableName, ['realtime_logs', 'error_logs'])) {
+            $whereClause = $this->buildWhereClause($params, $startDate, $endDate, '', 'timestamp');
+        }
+
         $orderBy = ($tableName === 'realtime_logs' || $tableName === 'error_logs') 
             ? 'timestamp DESC' 
             : 'hits DESC';
-
-        $query = "SELECT * FROM {$tableName} ORDER BY {$orderBy}";
-
-        $stmt = $this->pdo->query($query);
+        
+        $query = "SELECT * FROM {$tableName} {$whereClause} ORDER BY {$orderBy}";
+        
+        $stmt = $this->pdo->prepare($query);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

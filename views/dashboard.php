@@ -13,6 +13,18 @@ function renderPagination($totalPages, $currentPage, $paramName, $anchorId = '')
     echo '</div>';
 }
 
+// FUNGSI BANTU BARU UNTUK MEMBUAT LINK EKSPOR DINAMIS
+function getExportLink($tableName) {
+    $params = ['action' => 'export', 'table' => $tableName];
+    if (!empty($_GET['start_date'])) {
+        $params['start_date'] = $_GET['start_date'];
+    }
+    if (!empty($_GET['end_date'])) {
+        $params['end_date'] = $_GET['end_date'];
+    }
+    return 'index.php?' . http_build_query($params);
+}
+
 // Fungsi bantu baru untuk memotong teks URL dengan rapi
 function truncateUrl($url, $length = 50) {
     if (strlen($url) > $length) {
@@ -57,7 +69,7 @@ function truncateUrl($url, $length = 50) {
                 <div class="table-card" id="aktivitas-terbaru">
                     <div class="table-header">
                         <h2>Aktivitas Terbaru</h2>
-                        <a href="index.php?action=export&table=realtime_logs" class="export-button">Ekspor CSV</a>
+                        <a href="<?= getExportLink('realtime_logs') ?>" class="export-button">Ekspor CSV</a>
                     </div>
                     <div class="filter-controls">
                         <form action="index.php" method="GET" class="filter-form">
@@ -73,7 +85,7 @@ function truncateUrl($url, $length = 50) {
                     </div>
                     <table>
                         <thead><tr><th>Waktu</th><th>Alamat IP</th><th>Negara</th><th>URL</th><th>Status</th></tr></thead>
-                        <tbody><?php foreach ($realtimeLogs as $log): ?><tr><td><?= htmlspecialchars($log['timestamp']) ?></td><td><a href="index.php?action=dashboard&q=<?= htmlspecialchars($log['ip']) ?>"><?= htmlspecialchars($log['ip']) ?></a></td><td><?= htmlspecialchars($log['country']) ?></td><td class="url-cell" title="<?= htmlspecialchars($log['url']) ?>"><?= htmlspecialchars(truncateUrl($log['url'], 50)) ?></td><td><span class="status-code status-<?= substr($log['status'], 0, 1) ?>xx"><?= htmlspecialchars($log['status']) ?></span></td></tr><?php endforeach; ?></tbody>
+                        <tbody><?php foreach ($realtimeLogs as $log): ?><tr><td><?= htmlspecialchars($log['timestamp']) ?></td><td><a href="index.php?action=dashboard&q=<?= htmlspecialchars($log['ip']) ?>"><?= htmlspecialchars($log['ip']) ?></a></td><td><?= htmlspecialchars($log['country']) ?></td><td class="url-cell" title="<?= htmlspecialchars($log['url']) ?>"><?= htmlspecialchars(substr($log['url'], 0, 50)) ?>...</td><td><span class="status-code status-<?= substr($log['status'], 0, 1) ?>xx"><?= htmlspecialchars($log['status']) ?></span></td></tr><?php endforeach; ?></tbody>
                     </table>
                     <?php renderPagination($paginationData['page_realtime']['totalPages'], $paginationData['page_realtime']['currentPage'], 'page_realtime', 'aktivitas-terbaru'); ?>
                 </div>
@@ -81,11 +93,11 @@ function truncateUrl($url, $length = 50) {
                 <div class="table-card" id="detail-error">
                     <div class="table-header">
                         <h2>Detail Error Log</h2>
-                        <a href="index.php?action=export&table=error_logs" class="export-button">Ekspor CSV</a>
+                        <a href="<?= getExportLink('error_logs') ?>" class="export-button">Ekspor CSV</a>
                     </div>
                     <table>
                         <thead><tr><th>Waktu</th><th>Alamat IP</th><th>URL Error</th><th>Status</th></tr></thead>
-                        <tbody><?php foreach ($errorLogs as $error): ?><tr><td><?= htmlspecialchars($error['timestamp']) ?></td><td><a href="index.php?action=dashboard&q=<?= htmlspecialchars($error['ip']) ?>"><?= htmlspecialchars($error['ip']) ?></a></td><td class="url-cell" title="<?= htmlspecialchars($error['url']) ?>"><?= htmlspecialchars(truncateUrl($error['url'], 50)) ?></td><td><span class="status-code status-<?= substr($error['status'], 0, 1) ?>xx"><?= htmlspecialchars($error['status']) ?></span></td></tr><?php endforeach; ?></tbody>
+                        <tbody><?php foreach ($errorLogs as $error): ?><tr><td><?= htmlspecialchars($error['timestamp']) ?></td><td><a href="index.php?action=dashboard&q=<?= htmlspecialchars($error['ip']) ?>"><?= htmlspecialchars($error['ip']) ?></a></td><td class="url-cell" title="<?= htmlspecialchars($error['url']) ?>"><?= htmlspecialchars(substr($error['url'], 0, 50)) ?>...</td><td><span class="status-code status-<?= substr($error['status'], 0, 1) ?>xx"><?= htmlspecialchars($error['status']) ?></span></td></tr><?php endforeach; ?></tbody>
                     </table>
                     <?php renderPagination($paginationData['page_error']['totalPages'], $paginationData['page_error']['currentPage'], 'page_error', 'detail-error'); ?>
                 </div>
@@ -95,19 +107,19 @@ function truncateUrl($url, $length = 50) {
                 <div class="table-card" id="halaman-populer">
                     <div class="table-header">
                         <h2>Halaman Terpopuler</h2>
-                        <a href="index.php?action=export&table=pages" class="export-button">Ekspor CSV</a>
+                        <a href="<?= getExportLink('pages') ?>" class="export-button">Ekspor CSV</a>
                     </div>
                     <div class="chart-container" style="height: 200px;"><canvas id="popularPagesChart"></canvas></div>
                     <table>
                         <thead><tr><th>URL</th><th>Hits</th></tr></thead>
-                        <tbody><?php foreach ($topPages as $page): ?><tr><td class="url-cell" title="<?= htmlspecialchars($page['url']) ?>"><?= htmlspecialchars(truncateUrl($page['url'], 30)) ?></td><td><?= number_format($page['hits']) ?></td></tr><?php endforeach; ?></tbody>
+                        <tbody><?php foreach ($topPages as $page): ?><tr><td class="url-cell" title="<?= htmlspecialchars($page['url']) ?>"><?= htmlspecialchars(substr($page['url'], 0, 30)) ?>...</td><td><?= number_format($page['hits']) ?></td></tr><?php endforeach; ?></tbody>
                     </table>
                     <?php renderPagination($paginationData['page_popular']['totalPages'], $paginationData['page_popular']['currentPage'], 'page_popular', 'halaman-populer'); ?>
                 </div>
                 <div class="table-card" id="alamat-ip-teratas">
                     <div class="table-header">
                         <h2>Alamat IP Teratas</h2>
-                        <a href="index.php?action=export&table=ips" class="export-button">Ekspor CSV</a>
+                        <a href="<?= getExportLink('ips') ?>" class="export-button">Ekspor CSV</a>
                     </div>
                     <table>
                         <thead><tr><th>Alamat IP</th><th>Hits</th></tr></thead>
@@ -118,7 +130,7 @@ function truncateUrl($url, $length = 50) {
                 <div class="table-card" id="situs-perujuk">
                     <div class="table-header">
                         <h2>Situs Perujuk Teratas</h2>
-                        <a href="index.php?action=export&table=referrers" class="export-button">Ekspor CSV</a>
+                        <a href="<?= getExportLink('referrers') ?>" class="export-button">Ekspor CSV</a>
                     </div>
                     <table>
                         <thead><tr><th>Domain Perujuk</th><th>Hits</th></tr></thead>
@@ -135,7 +147,7 @@ function truncateUrl($url, $length = 50) {
         
         <footer><p>Proyek Mini SIEM - KKN</p></footer>
     </div>
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const createChart = (ctx, config) => { if(ctx) new Chart(ctx, config); };

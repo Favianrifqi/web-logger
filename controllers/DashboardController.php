@@ -1,5 +1,5 @@
 <?php
-// controllers/DashboardController.php (VERSI DENGAN FILTER TANGGAL)
+// controllers/DashboardController.php
 
 require_once __DIR__ . '/../models/LogModel.php';
 
@@ -15,13 +15,12 @@ class DashboardController {
         $logModel = new LogModel(getDbConnection());
         $rowsPerPage = 10;
 
-        // Ambil dan validasi input dari URL
         $searchTerm = isset($_GET['q']) ? trim(htmlspecialchars($_GET['q'])) : '';
         $startDate = isset($_GET['start_date']) && !empty($_GET['start_date']) ? $_GET['start_date'] : '';
         $endDate = isset($_GET['end_date']) && !empty($_GET['end_date']) ? $_GET['end_date'] : '';
+
         $sortOrder = (!empty($startDate) || !empty($endDate)) ? 'ASC' : 'DESC';
 
-        // Menyiapkan data paginasi
         $pageParams = [
             'page_realtime' => 'realtime_logs', 
             'page_error' => 'error_logs', 
@@ -37,7 +36,6 @@ class DashboardController {
             
             $searchableTables = ['realtime_logs', 'error_logs'];
             $currentSearchTerm = in_array($table, $searchableTables) ? $searchTerm : '';
-            // Hanya tabel log yang difilter tanggal
             $currentStartDate = in_array($table, $searchableTables) ? $startDate : '';
             $currentEndDate = in_array($table, $searchableTables) ? $endDate : '';
             $totalRows = $logModel->getTotalRows($table, $currentSearchTerm, $currentStartDate, $currentEndDate);
@@ -49,13 +47,12 @@ class DashboardController {
             ];
         }
 
-        // Mengambil semua data untuk ditampilkan dengan filter
         $data = [
             'searchTerm' => $searchTerm,
             'summary' => $logModel->getSummary($startDate, $endDate),
             'allStatusCodes' => $logModel->getAllStatusCodes(),
-            'realtimeLogs' => $logModel->getLogs('realtime_logs', $rowsPerPage, $paginationData['page_realtime']['offset'], $searchTerm, $startDate, $endDate),
-            'errorLogs' => $logModel->getLogs('error_logs', $rowsPerPage, $paginationData['page_error']['offset'], $searchTerm, $startDate, $endDate),
+            'realtimeLogs' => $logModel->getLogs('realtime_logs', $rowsPerPage, $paginationData['page_realtime']['offset'], $searchTerm, $startDate, $endDate, $sortOrder),
+            'errorLogs' => $logModel->getLogs('error_logs', $rowsPerPage, $paginationData['page_error']['offset'], $searchTerm, $startDate, $endDate, $sortOrder),
             'topPages' => $logModel->getTopItems('pages', 'url', $rowsPerPage, $paginationData['page_popular']['offset']),
             'topIps' => $logModel->getTopItems('ips', 'ip', $rowsPerPage, $paginationData['page_ips']['offset']),
             'topReferrers' => $logModel->getTopItems('referrers', 'domain', $rowsPerPage, $paginationData['page_referrers']['offset']),
@@ -71,52 +68,40 @@ class DashboardController {
     }
 
     public function handleExport() {
-        $this->checkAuth(); // Pastikan hanya user yang login yang bisa ekspor
-
         if (!isset($_GET['table'])) {
             die("Error: Nama tabel tidak ditentukan.");
         }
-
+        
         $tableName = $_GET['table'];
-
+        $startDate = isset($_GET['start_date']) && !empty($_GET['start_date']) ? $_GET['start_date'] : '';
+        $endDate = isset($_GET['end_date']) && !empty($_GET['end_date']) ? $_GET['end_date'] : '';
+        
         $logModel = new LogModel(getDbConnection());
-        $data = $logModel->getAllDataForExport($tableName);
-
+        $data = $logModel->getAllDataForExport($tableName, $startDate, $endDate);
+        
         if ($data === false) {
             die("Error: Tabel tidak valid atau tidak diizinkan untuk diekspor.");
         }
 
         if (empty($data)) {
-            // Redirect kembali ke dashboard jika tidak ada data untuk diekspor
-            header("Location: index.php?action=dashboard&export_status=empty");
+            $_SESSION['error_message'] = "Tidak ada data untuk diekspor pada rentang waktu yang dipilih.";
+            header("Location: " . ($_SERVER['HTTP_REFERER'] ?? 'index.php?action=dashboard'));
             exit;
         }
-
+        
         $filename = "export_" . $tableName . "_" . date('Y-m-d') . ".csv";
-
-        // Set header agar browser men-download file
+        
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
-
+        
         $output = fopen('php://output', 'w');
-
-        // Tulis baris header (nama kolom)
         fputcsv($output, array_keys($data[0]));
-
-        // Tulis baris data
         foreach ($data as $row) {
             fputcsv($output, $row);
         }
-
+        
         fclose($output);
         exit;
-    }
-
-    private function checkAuth() {
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: index.php?action=login');
-            exit;
-        }
     }
 }
 ?>
