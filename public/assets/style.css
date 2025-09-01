@@ -1,43 +1,35 @@
-/* public/assets/style.css (VERSI FINAL LENGKAP) */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-/* ======================================= */
-/* ========== ROOT VARIABLES ============= */
-/* ======================================= */
 :root {
-  --bg-color: #1a1a1a;
-  --card-bg-color: #2c2c2c;
-  --text-color: #e0e0e0;
-  --text-muted-color: #999;
-  --border-color: #444;
-
-  --primary-color: #36a2eb;
-  --green-color: #4bc0c0;
-  --orange-color: #ff9f40;
-  --red-color: #ff6384;
+    --bg-color: #1a1a1a;
+    --card-bg-color: #2c2c2c;
+    --text-color: #e0e0e0;
+    --text-muted-color: #999;
+    --border-color: #444;
+    --primary-color: #36A2EB;
+    --green-color: #4BC0C0;
+    --orange-color: #FF9F40;
+    --red-color: #FF6384;
 }
 
-/* ======================================= */
-/* ============ BASE STYLES ============== */
-/* ======================================= */
 body {
-  font-family: 'Poppins', sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  margin: 0;
-  line-height: 1.6;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    line-height: 1.6;
 }
 
 .container {
-  max-width: 1600px;
-  margin: 20px auto;
-  padding: 20px;
+    max-width: 1800px;
+    margin: 20px auto;
+    padding: 20px;
 }
 
 header {
-  text-align: center;
-  margin-bottom: 2rem;
-  position: relative;
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
 }
 
 header h1 {
