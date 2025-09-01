@@ -163,7 +163,16 @@ function truncateUrl($url, $length = 50) {
     
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const createChart = (ctx, config) => { if(ctx) new Chart(ctx, config); };
+            // Array untuk menyimpan semua instance chart yang kita buat
+            const charts = [];
+            
+            const createChart = (ctx, config) => {
+                if (ctx) {
+                    const chart = new Chart(ctx, config);
+                    charts.push(chart); // Simpan instance chart ke array
+                }
+            };
+            
             const popularPagesCtx = document.getElementById('popularPagesChart')?.getContext('2d');
             const browserCtx = document.getElementById('browserChart')?.getContext('2d');
             const osCtx = document.getElementById('osChart')?.getContext('2d');
@@ -179,6 +188,18 @@ function truncateUrl($url, $length = 50) {
             createChart(popularPagesCtx, { type: 'bar', data: { labels: popularPagesChartData.labels, datasets: [{ label: 'Jumlah Hits', data: popularPagesChartData.data, backgroundColor: 'rgba(54, 162, 235, 0.6)' }] }, options: { indexAxis: 'y', scales: { x: { beginAtZero: true }, y: {} }, plugins: { legend: { display: false } }, maintainAspectRatio: false } });
             createChart(browserCtx, { type: 'pie', data: { labels: browserChartData.labels, datasets: [{ data: browserChartData.data, backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } } });
             createChart(osCtx, { type: 'doughnut', data: { labels: osChartData.labels, datasets: [{ data: osChartData.data, backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } } });
+        
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                // Hapus timer sebelumnya untuk efisiensi
+                clearTimeout(resizeTimer);
+                // Set timer baru. Chart akan di-resize setelah user berhenti mengubah ukuran selama 250ms
+                resizeTimer = setTimeout(() => {
+                    charts.forEach(chart => {
+                        chart.resize();
+                    });
+                }, 250);
+            });
         });
     </script>
 </body>
