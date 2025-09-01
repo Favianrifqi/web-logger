@@ -1,5 +1,5 @@
 /* public/assets/style.css (VERSI FINAL LENGKAP) */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 /* ======================================= */
 /* ========== ROOT VARIABLES ============= */
@@ -21,7 +21,7 @@
 /* ============ BASE STYLES ============== */
 /* ======================================= */
 body {
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
   background-color: var(--bg-color);
   color: var(--text-color);
   margin: 0;
@@ -175,9 +175,14 @@ tbody tr:hover {
 .status-code {
   padding: 4px 8px;
   border-radius: 4px;
-
   color: #fff;
   font-weight: 500;
+}
+
+.status-codes-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px; /* Memberi jarak 8px antar badge */
 }
 
 .status-2xx {
@@ -299,7 +304,7 @@ footer {
   border: 1px solid var(--border-color);
   border-radius: 6px;
 
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 16px;
 
   background-color: #333;
@@ -394,25 +399,25 @@ footer {
   color: var(--text-muted-color);
 }
 
-.filter-form input[type="search"],
-.filter-form input[type="date"] {
+.filter-form input[type='search'],
+.filter-form input[type='date'] {
   padding: 8px 12px;
 
   border: 1px solid var(--border-color);
   border-radius: 6px;
 
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
   color: var(--text-color);
 
   background-color: #2c2c2c;
 }
 
-.filter-form input[type="search"] {
+.filter-form input[type='search'] {
   min-width: 250px;
 }
 
-.filter-form input[type="search"]:focus,
-.filter-form input[type="date"]:focus {
+.filter-form input[type='search']:focus,
+.filter-form input[type='date']:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(54, 162, 235, 0.4);
@@ -470,18 +475,18 @@ footer {
 }
 
 /* Calendar Icon Fix */
-.filter-form input[type="date"]::-webkit-calendar-picker-indicator {
+.filter-form input[type='date']::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }
 
-.filter-form input[type="date"]::-webkit-datetime-edit-text,
-.filter-form input[type="date"]::-webkit-datetime-edit-month-field,
-.filter-form input[type="date"]::-webkit-datetime-edit-day-field,
-.filter-form input[type="date"]::-webkit-datetime-edit-year-field {
+.filter-form input[type='date']::-webkit-datetime-edit-text,
+.filter-form input[type='date']::-webkit-datetime-edit-month-field,
+.filter-form input[type='date']::-webkit-datetime-edit-day-field,
+.filter-form input[type='date']::-webkit-datetime-edit-year-field {
   color: var(--text-muted-color);
 }
 
-.filter-form input[type="date"]:valid {
+.filter-form input[type='date']:valid {
   color: var(--text-color);
 }
 

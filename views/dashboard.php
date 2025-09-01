@@ -54,7 +54,20 @@ function truncateUrl($url, $length = 50) {
         <div class="summary-cards">
             <div class="card"><h2>Pengunjung Unik</h2><p><?= number_format($summary['unique_visitors']) ?></p></div>
             <div class="card"><h2>Total Permintaan (Hits)</h2><p><?= number_format($summary['total_hits']) ?></p></div>
-            <div class="card"><h2>Status Codes</h2><p><?php if(empty($allStatusCodes)){ echo '<span>-</span>'; } else { foreach($allStatusCodes as $status){ echo '<span class="status-code status-'. substr($status['code'], 0, 1) .'xx">'. $status['code'] .': '. number_format($status['hits']) .'</span>'; } } ?></p></div>
+            <div class="card">
+    <h2>Status Codes</h2>
+    <div class="status-codes-container">
+        <?php 
+        if(empty($allStatusCodes)) { 
+            echo '<span>-</span>'; 
+        } else { 
+            foreach($allStatusCodes as $status) {
+                echo '<span class="status-code status-'. substr($status['code'], 0, 1) .'xx">'. $status['code'] .': '. number_format($status['hits']) .'</span>'; 
+            } 
+        } 
+        ?>
+    </div>
+</div>
         </div>
         
         <div class="card" style="margin-bottom: 20px;">
