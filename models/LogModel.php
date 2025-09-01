@@ -18,20 +18,26 @@ class LogModel {
             $params[':end_date'] = $endDate;
         }
         if (!empty($searchTerm)) {
-            // Tentukan kolom mana yang bisa dicari untuk setiap tabel
-            $searchableColumnsMap = [
-                'realtime_logs' => ['ip', 'url', 'status', 'country'],
-                'error_logs' => ['ip', 'url', 'status']
-            ];
+            // Cek apakah searchTerm adalah angka 3 digit (kemungkinan besar status code)
+            if (ctype_digit($searchTerm) && strlen($searchTerm) === 3) {
+                $whereClauses[] = "status = :term";
+                $params[':term'] = $searchTerm;
+            } else {
+                // Jika bukan status code, lakukan pencarian umum di kolom yang relevan
+                $searchableColumnsMap = [
+                    'realtime_logs' => ['ip', 'url', 'country'],
+                    'error_logs' => ['ip', 'url']
+                ];
 
-            if (isset($searchableColumnsMap[$tableName])) {
-                $searchableColumns = $searchableColumnsMap[$tableName];
-                $searchClauses = [];
-                foreach ($searchableColumns as $col) {
-                    $searchClauses[] = "{$col} LIKE :term";
+                if (isset($searchableColumnsMap[$tableName])) {
+                    $searchableColumns = $searchableColumnsMap[$tableName];
+                    $searchClauses = [];
+                    foreach ($searchableColumns as $col) {
+                        $searchClauses[] = "{$col} LIKE :term";
+                    }
+                    $whereClauses[] = "(" . implode(' OR ', $searchClauses) . ")";
+                    $params[':term'] = '%' . $searchTerm . '%';
                 }
-                $whereClauses[] = "(" . implode(' OR ', $searchClauses) . ")";
-                $params[':term'] = '%' . $searchTerm . '%';
             }
         }
         return count($whereClauses) > 0 ? " WHERE " . implode(' AND ', $whereClauses) : "";
@@ -54,7 +60,6 @@ class LogModel {
     public function getTotalRows($tableName, $searchTerm = '', $startDate = '', $endDate = '') {
         $params = [];
         $dateColumn = ($tableName === 'daily_summary') ? 'date' : 'timestamp';
-        // Kita teruskan nama tabel ke buildWhereClause
         $whereClause = $this->buildWhereClause($params, $tableName, $startDate, $endDate, $searchTerm, $dateColumn);
         $sql = "SELECT COUNT(*) FROM {$tableName} {$whereClause}";
         
@@ -80,7 +85,6 @@ class LogModel {
             'date' => $result['date'] ?? date('Y-m-d')
         ];
     }
-
 
     public function getTopItems($table, $column, $limit, $offset) {
         $stmt = $this->pdo->prepare("SELECT {$column}, hits FROM {$table} ORDER BY hits DESC LIMIT :limit OFFSET :offset");
